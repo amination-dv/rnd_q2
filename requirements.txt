@@ -1,0 +1,20 @@
+--extra-index-url https://aws:${CODEARTIFACT_AUTH_TOKEN}@darkvision-961437118368.d.codeartifact.us-west-2.amazonaws.com/pypi/ili-python-research/simple/
+--extra-index-url https://download.pytorch.org/whl/cu118
+
+-e ./ilipyutils
+
+boto3==1.34.69
+botocore==1.34.69
+cupy_cuda12x==13.1.0
+griffe==0.42.1 # Prefect versions beyond 2.19.3 do not support latest versions
+numpy==1.26.3
+opencv-python==4.11.0.86
+pandas==2.2.2
+prefect==2.19.3
+prefect-aws>=0.4.18
+pyarrow
+pytest
+s3fs
+torch==2.2.2+cu118
+torchvision==0.17.2+cu118
+typing_extensions>=4.0
