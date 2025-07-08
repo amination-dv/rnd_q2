@@ -2,7 +2,7 @@ import os
 import sys
 import random
 
-# sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
 
 from ilipy import Session
 from ilipy.database import DistanceCorrelation
@@ -12,6 +12,7 @@ from rnd.utils.data_utils import (
     generate_images,
     extract_bookmarks,
     generate_new_locations,
+    extract_dent_anomalies
 )
 
 
@@ -54,7 +55,7 @@ if __name__ == "__main__":
         num_tracks=20,
         tick_sampling_interval=10,
         normalize=True,
-        output_dir=f"data/fhr{run_number}/pos",
+        output_dir=f"data/fhr{run_number}/neg",
     )
 
     # # Saving no girth weld images
@@ -71,3 +72,21 @@ if __name__ == "__main__":
         normalize=False,
         output_dir=f"data/fhr{run_number}/neg",
     )
+    dent_locations = extract_dent_anomalies(
+        session=session,
+        inspection_id=inspection_id,
+        dist_corr=dist_corr,
+    )
+
+
+    saved_dent_files = generate_images(
+        session=session,
+        bookmark_locations=dent_locations,
+        dist_corr=dist_corr,
+        length=0.5,
+        num_tracks=20,
+        tick_sampling_interval=10,
+        normalize=True,
+        output_dir=f"data/fhr{run_number}/pos",
+    )
+

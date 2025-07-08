@@ -12,6 +12,8 @@ from ilipy import ClipTypes, Session, OdometerTicks, OdometerTickRange, ViewDist
 from ilipy.database import DistanceCorrelation
 from ilipy.features import Bookmarks
 from ilipy.sensors import ArmAngleLookup
+from ilipyutils.ml_features.query import FeatureQuery
+from ilipyutils.ml_features.base import get_anomaly_types
 
 
 def set_ili_run(run_number):
@@ -347,6 +349,45 @@ def generate_images(
     print(f"Saved {len(saved_files)} arm angle matrices to '{output_dir}'")
     return saved_files
 
+def extract_dent_anomalies(session, inspection_id, dist_corr):
+    """
+    Extract dent anomalies from the inspection session.
+
+    Args:
+        session (Session): The ILIPY session object.
+        inspection_id (str): The ID of the inspection session.
+        dist_corr (DistanceCorrelation): The distance correlation object.
+
+    Returns:
+        list: A list of view distances where dents are located.
+    """
+    bookmarks = Bookmarks(session.database_connector)
+    feature_query = FeatureQuery(session=session, bookmarks_interface=bookmarks)
+    session.set_active_inspection(inspection_id)
+    locations = []
+
+    # Get Dent Anomaly Type
+    dent_anomaly_type = [a for a in get_anomaly_types() if a.name in ["Dent Complex", "Dent Plain"]]
+    for dent_type in dent_anomaly_type:
+        # Query clips with dent anomalies for the specified inspection
+        clip_dent_dict = feature_query.get_clips_by_anomaly_type(
+            dent_type,
+            inspection_id_list=[inspection_id],
+        )
+
+        # Iterate through clips and dents
+        for clip, dent_list in clip_dent_dict.items():
+            for dent in dent_list:
+                    if dent.status.value == "KNOWN":
+                        for track_loc in dent.feature_location.location_matrix:
+                            for clip_loc in track_loc:
+                                if clip_loc.clip.clip_id == clip.clip_id:
+                                    dent_odo_start, dent_odo_end = clip_loc.odometer_ticks_range
+                                    dent_odo = (dent_odo_start+dent_odo_end)/2
+                                    view_distance = dist_corr.get_view_distance_from_odometer_ticks(clip_loc.clip, OdometerTicks(int(dent_odo)))
+                                    locations.append(view_distance.value)
+
+    return locations
 
 # if __name__ == "__main__":
 #     # Example usage
