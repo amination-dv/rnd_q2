@@ -12,7 +12,7 @@ from rnd.utils.data_utils import (
     generate_images,
     extract_bookmarks,
     generate_new_locations,
-    extract_dent_anomalies
+    extract_dent_anomalies,
 )
 
 
@@ -21,9 +21,9 @@ if __name__ == "__main__":
     run_number = 4  # Change this to the desired run number
     _, _, inspection_id, env, _, start, end = set_ili_run(run_number)
 
-    num_images = 10
+    num_images = 500
 
-    session = Session(environment=env)
+    session = Session(environment=env)  # Pass "research" for positive samples
     session.set_active_inspection(inspection_id)
     dist_corr = DistanceCorrelation(session)
 
@@ -69,7 +69,7 @@ if __name__ == "__main__":
         length=0.5,
         num_tracks=20,
         tick_sampling_interval=10,
-        normalize=False,
+        normalize=True,
         output_dir=f"data/fhr{run_number}/neg",
     )
     dent_locations = extract_dent_anomalies(
@@ -78,6 +78,7 @@ if __name__ == "__main__":
         dist_corr=dist_corr,
     )
 
+    print(f"###### Found {len(dent_locations)} dent anomalies. ######")
 
     saved_dent_files = generate_images(
         session=session,
@@ -89,4 +90,3 @@ if __name__ == "__main__":
         normalize=True,
         output_dir=f"data/fhr{run_number}/pos",
     )
-

@@ -28,8 +28,8 @@ def main(args):
     transform = transforms.Compose(
         [
             transforms.Lambda(resize_to_224),
-            RandomApplyNp(RandomHorizontalRoll(max_shift=150), p=0.4),
-            RandomApplyNp(RandomRowSwap(num_swaps=4), p=0.3),
+            # RandomApplyNp(RandomHorizontalRoll(max_shift=150), p=0.4),
+            # RandomApplyNp(RandomRowSwap(num_swaps=4), p=0.3),
             # RandomApplyNp(RandomJitter(max_jitter=30), p=0.1),
             transforms.ToTensor(),
             transforms.Lambda(lambda x: x.expand(3, -1, -1)),
@@ -103,6 +103,6 @@ if __name__ == "__main__":
     parser.add_argument("--lr", type=float, default=1e-3)
     parser.add_argument("--dense-units", type=int, default=128)
     parser.add_argument("--dropout", type=float, default=0.5)
-    parser.add_argument("--save-dir", type=str, default="models/saved_models")
+    parser.add_argument("--save-dir", type=str, default="models/dent_models")
     args = parser.parse_args()
     main(args)
