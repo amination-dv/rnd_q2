@@ -1,6 +1,7 @@
 import os
 import sys
 import random
+import json
 import glob
 
 
@@ -28,11 +29,16 @@ if __name__ == "__main__":
     dist_corr = DistanceCorrelation(session)
 
 
-    dent_locations = extract_dent_anomalies(
+    dent_locations, tracks_ind = extract_dent_anomalies(
         session=session,
         inspection_id=inspection_id,
         dist_corr=dist_corr,
     )
+
+    output_json_path = f"data/fhr{run_number}/dent_tracks_indices.json"
+    os.makedirs(os.path.dirname(output_json_path), exist_ok=True)
+    with open(output_json_path, 'w') as json_file:
+        json.dump(tracks_ind, json_file, indent=2)
 
     # qced_data_dir = "/home/zmirikha/GitHub/rnd_q2/data/fhr4/pos_0.5/qc"
     # dent_locations = []
