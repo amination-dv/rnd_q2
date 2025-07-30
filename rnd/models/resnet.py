@@ -25,7 +25,7 @@ class ResNet18Classifier(nn.Module):
             nn.Linear(in_features, dense_units),
             nn.ReLU(),
             nn.Dropout(dropout_rate),
-            nn.Linear(dense_units, 2),
+            nn.Linear(dense_units, 21),
         )
 
         # Replace original fc layer with our custom classifier

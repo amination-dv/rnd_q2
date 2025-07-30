@@ -85,8 +85,8 @@ def validate(model, val_loader, criterion, device, full_ds, val_ds, batch_size):
             total += labels.size(0)
 
             all_val_labels.extend(labels.cpu().numpy().flatten())
-            all_val_probs.extend(raw_outputs.softmax(dim=1)[:, 1].cpu().numpy().flatten())  # Store positive class probs
-            
+            all_val_probs.extend(raw_outputs.softmax(dim=1).cpu().numpy())  # Store positive class probs
+
             # Track sample paths for this batch
             start = batch_idx * batch_size
             end = start + len(labels)
@@ -101,10 +101,9 @@ def validate(model, val_loader, criterion, device, full_ds, val_ds, batch_size):
     acc = correct / total
     
     # Calculate precision, recall, and other metrics
-    val_preds = [1 if p > 0.5 else 0 for p in all_val_probs]
-    precision = precision_score(all_val_labels, val_preds, zero_division=0)
-    recall = recall_score(all_val_labels, val_preds, zero_division=0)
-    pr_precision, pr_recall, pr_thresholds = precision_recall_curve(all_val_labels, all_val_probs)
+    val_preds = np.argmax(np.array(all_val_probs), axis=1).tolist()
+    precision = precision_score(all_val_labels, val_preds, average='macro', zero_division=0)
+    recall = recall_score(all_val_labels, val_preds, average='macro', zero_division=0)
     
     # Prepare results
     misclassified = [str(all_val_paths[i]) for i, (pred, label) in 
@@ -115,7 +114,6 @@ def validate(model, val_loader, criterion, device, full_ds, val_ds, batch_size):
         'accuracy': acc,
         'precision': precision,
         'recall': recall,
-        'pr_curve': (pr_precision, pr_recall, pr_thresholds),
         'labels': all_val_labels,
         'predictions': val_preds,
         'probabilities': all_val_probs,
@@ -156,7 +154,7 @@ def visualize_gradcam(model, val_loader, device, full_ds, val_ds,
             # Process each image in the batch, but only if it's a positive sample
             for i in range(inputs.size(0)):
                 # Only process positive samples (where label is 1)
-                if labels[i].item() == 1:
+                if labels[i].item() != 0:
                     if count >= num_positive_samples:
                         break
                         
@@ -237,18 +235,10 @@ def visualize_gradcam(model, val_loader, device, full_ds, val_ds,
 
 def log_wandb_results(epoch, train_loss, val_results):
     """Log metrics to Weights & Biases"""
+
     if 'wandb' not in globals():
         return
-        
-    # Create PR curve figure
-    fig, ax = plt.subplots()
-    pr_precision, pr_recall, _ = val_results['pr_curve']
-    ax.plot(pr_recall, pr_precision, label='PR Curve')
-    ax.set_xlabel('Recall')
-    ax.set_ylabel('Precision')
-    ax.set_title('Precision-Recall Curve')
-    ax.legend()
-    
+
     # Log metrics
     wandb.log({
         'epoch': epoch + 1,
@@ -257,11 +247,9 @@ def log_wandb_results(epoch, train_loss, val_results):
         'val_accuracy': val_results['accuracy'],
         'val_precision': val_results['precision'],
         'val_recall': val_results['recall'],
-        'pr_curve': wandb.Image(fig)
     })
     
-    plt.close(fig)
-
+ 
 
 def main(args):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -305,7 +293,7 @@ def main(args):
 
     sampler = WeightedRandomSampler(weights, num_samples=len(train_labels), replacement=True)
     train_loader = DataLoader(train_ds, batch_size=args.batch_size, sampler=sampler)
-    val_loader = DataLoader(val_ds, batch_size=args.batch_size, shuffle=False)
+    val_loader = DataLoader(val_ds, batch_size=args.batch_size, shuffle=True)
 
     # Prepare misclassified samples json file
     misclassified_json_path = os.path.join(args.save_dir, 'misclassified_samples.json')
@@ -326,45 +314,50 @@ def main(args):
         weight_decay=1e-4  # L2 regularization to prevent overfitting
     )
     scheduler = ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=3)
-
-    # Training
-    for epoch in range(args.epochs):
-        # Train for one epoch
-        train_loss = train_epoch(model, train_loader, criterion, optimizer, device)
-        print(f"[Epoch {epoch + 1}] Train Loss: {train_loss:.4f}")
-        
-        # Validate
-        val_results = validate(model, val_loader, criterion, device, 
-                             full_ds, val_ds, args.batch_size)
-        
-        # Save misclassified samples for this epoch
-        with open(misclassified_json_path, 'r+') as f:
-            data = json.load(f)
-            data[f'epoch_{epoch+1}'] = val_results['misclassified']
-            f.seek(0)
-            json.dump(data, f, indent=2)
-            f.truncate()
+    if args.train:
+        # Training
+        for epoch in range(args.epochs):
+            # Train for one epoch
+            train_loss = train_epoch(model, train_loader, criterion, optimizer, device)
+            print(f"[Epoch {epoch + 1}] Train Loss: {train_loss:.4f}")
             
-        # Log metrics to wandb
-        log_wandb_results(epoch, train_loss, val_results)
-        
-        # Update learning rate scheduler
-        scheduler.step(val_results['loss'])
-        print(f"Val Accuracy: {val_results['accuracy']:.4f}, "
-              f"Precision: {val_results['precision']:.4f}, "
-              f"Recall: {val_results['recall']:.4f}")
-        print(f"LR: {scheduler.get_last_lr()}")
+            # Validate
+            val_results = validate(model, val_loader, criterion, device, 
+                                full_ds, val_ds, args.batch_size)
+            
+            # Save misclassified samples for this epoch
+            with open(misclassified_json_path, 'r+') as f:
+                data = json.load(f)
+                data[f'epoch_{epoch+1}'] = val_results['misclassified']
+                f.seek(0)
+                json.dump(data, f, indent=2)
+                f.truncate()
+                
+            # Log metrics to wandb
+            log_wandb_results(epoch, train_loss, val_results)
+            
+            # Update learning rate scheduler
+            scheduler.step(val_results['loss'])
+            print(f"Val Accuracy: {val_results['accuracy']:.4f}, "
+                f"Precision: {val_results['precision']:.4f}, "
+                f"Recall: {val_results['recall']:.4f}")
+            print(f"LR: {scheduler.get_last_lr()}")
 
-    # Save model
-    os.makedirs(args.save_dir, exist_ok=True)
-    torch.save(
-        model.state_dict(), os.path.join(args.save_dir, f"{args.model}_final.pth")
-    )
+        # Save model
+        os.makedirs(args.save_dir, exist_ok=True)
+        torch.save(
+            model.state_dict(), os.path.join(args.save_dir, f"{args.model}_final.pth")
+        )
+    else:
+
+        # Load model if not training
+        model.load_state_dict(torch.load(os.path.join(args.save_dir, f"{args.model}_final.pth")))
+        print(f"Model loaded from {args.save_dir}/{args.model}_final.pth")
     
     # Generate GradCAM visualizations
     gradcam_dir = os.path.join(args.save_dir, "gradcam")
     num_samples = visualize_gradcam(model, val_loader, device, 
-                                   full_ds, val_ds, gradcam_dir, num_positive_samples=20)
+                                   full_ds, val_ds, gradcam_dir, num_positive_samples=300)
     
     print(f"✅ Model saved to: {args.save_dir}/{args.model}_final.pth")
     print(f"✅ GradCAM visualizations saved to: {gradcam_dir} ({num_samples} positive samples)")
@@ -375,7 +368,8 @@ if __name__ == "__main__":
     parser.add_argument(
         "--model", type=str, default="resnet", choices=["resnet", "mobilenet"]
     )
-    parser.add_argument("--data-dir", type=str, default="./data/fhr4/final_data")
+    parser.add_argument("--data-dir", type=str, default="./data/fhr4/final_data_21_classifier")
+    parser.add_argument("--train", action="store_true", default=False, help="Set to False to load model and generate GradCAM")
     parser.add_argument("--batch-size", type=int, default=12)
     parser.add_argument("--epochs", type=int, default=40)
     parser.add_argument("--lr", type=float, default=1e-2)

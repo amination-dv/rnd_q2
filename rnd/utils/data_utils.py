@@ -381,6 +381,7 @@ def extract_dent_anomalies(session, inspection_id, dist_corr):
     feature_query = FeatureQuery(session=session, bookmarks_interface=bookmarks)
     session.set_active_inspection(inspection_id)
     locations = []
+    tracks_ind ={}
 
     # Get Dent Anomaly Type
     dent_anomaly_type = [a for a in get_anomaly_types() if a.name in ["Dent Complex", "Dent Plain"]]
@@ -398,12 +399,16 @@ def extract_dent_anomalies(session, inspection_id, dist_corr):
                         for track_loc in dent.feature_location.location_matrix:
                             for clip_loc in track_loc:
                                 if clip_loc.clip.clip_id == clip.clip_id:
+                                    
                                     dent_odo_start, dent_odo_end = clip_loc.odometer_ticks_range
                                     dent_odo = (dent_odo_start+dent_odo_end)/2
                                     view_distance = dist_corr.get_view_distance_from_odometer_ticks(clip_loc.clip, OdometerTicks(int(dent_odo)))
                                     locations.append(view_distance.value)
+                                    view_dist_mm = round(view_distance.value * 1000, 2)
+                                    vd_key = f"d{view_dist_mm:010.0f}"
+                                    tracks_ind[vd_key] = clip.track_index
 
-    return locations
+    return locations, tracks_ind
 
 # if __name__ == "__main__":
 #     # Example usage
