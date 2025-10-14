@@ -7,14 +7,16 @@ import random
 import numpy as np
 import pandas as pd
 from typing import Dict
+import matplotlib.pyplot as plt
 
-from ilipy import ClipTypes, Session, OdometerTicks, OdometerTickRange, ViewDistance
-from ilipy.database import DistanceCorrelation
+from ilipy import ClipTypes, OdometerTicks, OdometerTickRange, ViewDistance
 from ilipy.features import Bookmarks
 from ilipy.sensors import ArmAngleLookup
+from ilipyutils.ml_features.query import FeatureQuery
+from ilipyutils.ml_features.base import get_anomaly_types
 
 
-def set_ili_run(run_number):
+def set_ili_run(run_number, env="research"):
     """
     Set the ILIT run configurations depending on the run.
     """
@@ -23,7 +25,7 @@ def set_ili_run(run_number):
             "surf_s3_bucket": "nan",
             "surf_s3_base_prefix": "nan",
             "inspection_id": "08VGYQQ1ZSU",
-            "env": "research",
+            "env": env,
             "clip_id": "nan",
             "start_distance": 100,
             "end_distance": 36400,
@@ -32,7 +34,7 @@ def set_ili_run(run_number):
             "surf_s3_bucket": "nan",
             "surf_s3_base_prefix": "nan",
             "inspection_id": "09E27PISVFM",
-            "env": "research",
+            "env": env,
             "clip_id": "nan",
             "start_distance": 100,
             "end_distance": 36800,
@@ -41,7 +43,7 @@ def set_ili_run(run_number):
             "surf_s3_bucket": "dv-fhr-3",
             "surf_s3_base_prefix": "track_runs/09FJN6N5AN6/ili_ml_surface/v1.2",
             "inspection_id": "09FJN6N5AN6",
-            "env": "research",
+            "env": env,
             "clip_id": "01-006-0TWUX9KZ",
             "start_distance": 100,
             "end_distance": 25700,
@@ -50,7 +52,7 @@ def set_ili_run(run_number):
             "surf_s3_bucket": "dv-ilit0004",
             "surf_s3_base_prefix": "track_runs/09JBC62FLJZ/ili_ml_surface/v1.2",
             "inspection_id": "09JBC62FLJZ",
-            "env": "prod",
+            "env": env,
             "clip_id": "01-017-0V9ZC3GT",
             "start_distance": 112796.8,
             "end_distance": 187770,
@@ -59,7 +61,7 @@ def set_ili_run(run_number):
             "surf_s3_bucket": "dv-ilit0005",
             "surf_s3_base_prefix": "track_runs/09QWB8A52AN/ili_ml_surface/v1.2",
             "inspection_id": "09QWB8A52AN",
-            "env": "prod",
+            "env": env,
             "clip_id": "01-017-0V9ZC3GT",
             "start_distance": 10,
             "end_distance": 13983,
@@ -270,7 +272,11 @@ def create_arm_array(
         denom = np.where((row_max - row_min) == 0, 1, row_max - row_min)
         arm_array = (arm_array - row_min) / denom
 
-    return arm_array
+        arr_mean = arm_array.mean(axis=1, keepdims=True)
+        arr_std = arm_array.std(axis=1, keepdims=True)
+        return (arm_array - arr_mean) / np.where(arr_std == 0, 1, arr_std)
+
+    return arm_array        
 
 
 def generate_images(
@@ -325,7 +331,6 @@ def generate_images(
                 continue
 
             num_tick_samples = int(length * 10000 / tick_sampling_interval)
-            print(num_tick_samples)
             matrix = create_arm_array(
                 arm_data,
                 num_tracks=num_tracks,
@@ -339,6 +344,19 @@ def generate_images(
             filepath = os.path.join(output_dir, filename)
             np.save(filepath, matrix)
             saved_files.append(filepath)
+            qc_output_dir = os.path.join(output_dir, "qc")
+            os.makedirs(qc_output_dir, exist_ok=True)
+            plt.imshow(
+                matrix.T, cmap="inferno", origin="lower", aspect="auto",
+                interpolation="nearest",
+            )
+            plt.axis("off")
+            plt.savefig(
+                os.path.join(qc_output_dir, f"{view_dist_mm:010.0f}.png"),
+                bbox_inches="tight",
+                pad_inches=0,
+            )
+            plt.close()
 
         except Exception as e:
             print(f"Skipping view distance {view_dist:.2f} due to error: {e}")
@@ -347,6 +365,45 @@ def generate_images(
     print(f"Saved {len(saved_files)} arm angle matrices to '{output_dir}'")
     return saved_files
 
+def extract_dent_anomalies(session, inspection_id, dist_corr):
+    """
+    Extract dent anomalies from the inspection session.
+
+    Args:
+        session (Session): The ILIPY session object.
+        inspection_id (str): The ID of the inspection session.
+        dist_corr (DistanceCorrelation): The distance correlation object.
+
+    Returns:
+        list: A list of view distances where dents are located.
+    """
+    bookmarks = Bookmarks(session.database_connector)
+    feature_query = FeatureQuery(session=session, bookmarks_interface=bookmarks)
+    session.set_active_inspection(inspection_id)
+    locations = []
+
+    # Get Dent Anomaly Type
+    dent_anomaly_type = [a for a in get_anomaly_types() if a.name in ["Dent Complex", "Dent Plain"]]
+    for dent_type in dent_anomaly_type:
+        # Query clips with dent anomalies for the specified inspection
+        clip_dent_dict = feature_query.get_clips_by_anomaly_type(
+            dent_type,
+            inspection_id_list=[inspection_id],
+        )
+
+        # Iterate through clips and dents
+        for clip, dent_list in clip_dent_dict.items():
+            for dent in dent_list:
+                    if dent.status.value == "KNOWN":
+                        for track_loc in dent.feature_location.location_matrix:
+                            for clip_loc in track_loc:
+                                if clip_loc.clip.clip_id == clip.clip_id:
+                                    dent_odo_start, dent_odo_end = clip_loc.odometer_ticks_range
+                                    dent_odo = (dent_odo_start+dent_odo_end)/2
+                                    view_distance = dist_corr.get_view_distance_from_odometer_ticks(clip_loc.clip, OdometerTicks(int(dent_odo)))
+                                    locations.append(view_distance.value)
+
+    return locations
 
 # if __name__ == "__main__":
 #     # Example usage

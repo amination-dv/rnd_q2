@@ -82,7 +82,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--output-csv",
         type=str,
-        default="pred_probs.csv",
+        default="dent_probs.csv",
         help="Where to save the prediction output",
     )
     args = parser.parse_args()

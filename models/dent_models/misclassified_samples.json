@@ -1,0 +1,358 @@
+{
+  "epoch_1": [
+    "data/fhr4/final_data/neg/d0153534140.npy",
+    "data/fhr4/final_data/neg/d0129523310.npy",
+    "data/fhr4/final_data/neg/d0130797870.npy",
+    "data/fhr4/final_data/neg/d0131148510.npy",
+    "data/fhr4/final_data/neg/d0170355990.npy",
+    "data/fhr4/final_data/neg/d0125757020.npy",
+    "data/fhr4/final_data/neg/d0159072340.npy",
+    "data/fhr4/final_data/neg/d0161796270.npy",
+    "data/fhr4/final_data/neg/d0122205810.npy",
+    "data/fhr4/final_data/neg/d0168788420.npy",
+    "data/fhr4/final_data/neg/d0122758270.npy",
+    "data/fhr4/final_data/neg/d0132013790.npy",
+    "data/fhr4/final_data/neg/d0132691050.npy",
+    "data/fhr4/final_data/neg/d0164340900.npy",
+    "data/fhr4/final_data/neg/d0114323940.npy",
+    "data/fhr4/final_data/neg/d0139221090.npy",
+    "data/fhr4/final_data/neg/d0112861110.npy",
+    "data/fhr4/final_data/neg/d0125938230.npy",
+    "data/fhr4/final_data/neg/d0168599500.npy",
+    "data/fhr4/final_data/neg/d0161723000.npy",
+    "data/fhr4/final_data/neg/d0161799130.npy",
+    "data/fhr4/final_data/neg/d0161241320.npy",
+    "data/fhr4/final_data/neg/d0133008590.npy",
+    "data/fhr4/final_data/neg/d0138728730.npy",
+    "data/fhr4/final_data/neg/d0126131930.npy",
+    "data/fhr4/final_data/neg/d0119393230.npy",
+    "data/fhr4/final_data/neg/d0168897320.npy",
+    "data/fhr4/final_data/neg/d0145285860.npy",
+    "data/fhr4/final_data/neg/d0168398413.npy",
+    "data/fhr4/final_data/neg/d0156820160.npy",
+    "data/fhr4/final_data/neg/d0112798830.npy",
+    "data/fhr4/final_data/neg/d0140987670.npy",
+    "data/fhr4/final_data/neg/d0113781220.npy",
+    "data/fhr4/final_data/neg/d0115357660.npy",
+    "data/fhr4/final_data/neg/d0133662610.npy",
+    "data/fhr4/final_data/neg/d0162904650.npy",
+    "data/fhr4/final_data/neg/d0113114780.npy",
+    "data/fhr4/final_data/neg/d0163125780.npy",
+    "data/fhr4/final_data/neg/d0168350100.npy",
+    "data/fhr4/final_data/neg/d0137633860.npy",
+    "data/fhr4/final_data/neg/d0118101620.npy"
+  ],
+  "epoch_2": [
+    "data/fhr4/final_data/pos/d0165489538.npy",
+    "data/fhr4/final_data/neg/d0170355990.npy",
+    "data/fhr4/final_data/pos/d0117479643.npy",
+    "data/fhr4/final_data/pos/d0140375736.npy",
+    "data/fhr4/final_data/neg/d0161799130.npy",
+    "data/fhr4/final_data/pos/d0152151974.npy",
+    "data/fhr4/final_data/pos/d0156703239.npy",
+    "data/fhr4/final_data/neg/d0168897320.npy",
+    "data/fhr4/final_data/pos/d0115125039.npy",
+    "data/fhr4/final_data/pos/d0165191840.npy",
+    "data/fhr4/final_data/pos/d0135720243.npy",
+    "data/fhr4/final_data/neg/d0168350100.npy",
+    "data/fhr4/final_data/pos/d0158697138.npy",
+    "data/fhr4/final_data/pos/d0157315799.npy",
+    "data/fhr4/final_data/pos/d0164812779.npy"
+  ],
+  "epoch_3": [
+    "data/fhr4/final_data/neg/d0153534140.npy",
+    "data/fhr4/final_data/neg/d0129523310.npy",
+    "data/fhr4/final_data/neg/d0130797870.npy",
+    "data/fhr4/final_data/neg/d0170355990.npy",
+    "data/fhr4/final_data/pos/d0117888406.npy",
+    "data/fhr4/final_data/pos/d0137401731.npy",
+    "data/fhr4/final_data/neg/d0168788420.npy",
+    "data/fhr4/final_data/neg/d0122758270.npy",
+    "data/fhr4/final_data/neg/d0132013790.npy",
+    "data/fhr4/final_data/neg/d0164340900.npy",
+    "data/fhr4/final_data/neg/d0139221090.npy",
+    "data/fhr4/final_data/pos/d0152151974.npy",
+    "data/fhr4/final_data/pos/d0156703239.npy",
+    "data/fhr4/final_data/neg/d0126131930.npy",
+    "data/fhr4/final_data/neg/d0168897320.npy",
+    "data/fhr4/final_data/pos/d0153687240.npy",
+    "data/fhr4/final_data/pos/d0135720243.npy",
+    "data/fhr4/final_data/neg/d0155549160.npy",
+    "data/fhr4/final_data/neg/d0163125780.npy",
+    "data/fhr4/final_data/neg/d0168350100.npy",
+    "data/fhr4/final_data/pos/d0114810100.npy",
+    "data/fhr4/final_data/pos/d0149032618.npy",
+    "data/fhr4/final_data/neg/d0137633860.npy",
+    "data/fhr4/final_data/pos/d0140571817.npy",
+    "data/fhr4/final_data/pos/d0156895949.npy",
+    "data/fhr4/final_data/pos/d0139107599.npy",
+    "data/fhr4/final_data/pos/d0164812779.npy"
+  ],
+  "epoch_4": [
+    "data/fhr4/final_data/neg/d0129523310.npy",
+    "data/fhr4/final_data/neg/d0170355990.npy",
+    "data/fhr4/final_data/neg/d0125938230.npy",
+    "data/fhr4/final_data/neg/d0161799130.npy",
+    "data/fhr4/final_data/neg/d0145285860.npy",
+    "data/fhr4/final_data/neg/d0133662610.npy",
+    "data/fhr4/final_data/pos/d0164812779.npy"
+  ],
+  "epoch_5": [
+    "data/fhr4/final_data/neg/d0129523310.npy",
+    "data/fhr4/final_data/neg/d0170355990.npy",
+    "data/fhr4/final_data/neg/d0125938230.npy",
+    "data/fhr4/final_data/neg/d0161799130.npy",
+    "data/fhr4/final_data/neg/d0145285860.npy",
+    "data/fhr4/final_data/neg/d0133662610.npy",
+    "data/fhr4/final_data/pos/d0164812779.npy"
+  ],
+  "epoch_6": [
+    "data/fhr4/final_data/neg/d0153534140.npy",
+    "data/fhr4/final_data/neg/d0129523310.npy",
+    "data/fhr4/final_data/neg/d0125938230.npy",
+    "data/fhr4/final_data/neg/d0161799130.npy",
+    "data/fhr4/final_data/neg/d0168897320.npy",
+    "data/fhr4/final_data/neg/d0133662610.npy",
+    "data/fhr4/final_data/pos/d0164812779.npy"
+  ],
+  "epoch_7": [
+    "data/fhr4/final_data/pos/d0165489538.npy",
+    "data/fhr4/final_data/neg/d0125938230.npy",
+    "data/fhr4/final_data/pos/d0152151974.npy",
+    "data/fhr4/final_data/pos/d0128805252.npy",
+    "data/fhr4/final_data/pos/d0156703239.npy",
+    "data/fhr4/final_data/pos/d0136105566.npy",
+    "data/fhr4/final_data/pos/d0124243204.npy",
+    "data/fhr4/final_data/pos/d0115125039.npy",
+    "data/fhr4/final_data/pos/d0121201203.npy",
+    "data/fhr4/final_data/pos/d0157535878.npy",
+    "data/fhr4/final_data/pos/d0117840861.npy",
+    "data/fhr4/final_data/pos/d0158697138.npy",
+    "data/fhr4/final_data/pos/d0164812779.npy"
+  ],
+  "epoch_8": [
+    "data/fhr4/final_data/pos/d0165489538.npy",
+    "data/fhr4/final_data/pos/d0144901742.npy",
+    "data/fhr4/final_data/neg/d0125938230.npy",
+    "data/fhr4/final_data/neg/d0161799130.npy",
+    "data/fhr4/final_data/pos/d0152151974.npy",
+    "data/fhr4/final_data/pos/d0128805252.npy",
+    "data/fhr4/final_data/pos/d0124243204.npy",
+    "data/fhr4/final_data/pos/d0160628140.npy",
+    "data/fhr4/final_data/pos/d0115125039.npy",
+    "data/fhr4/final_data/pos/d0121201203.npy",
+    "data/fhr4/final_data/pos/d0165191840.npy",
+    "data/fhr4/final_data/neg/d0133662610.npy",
+    "data/fhr4/final_data/pos/d0157535878.npy",
+    "data/fhr4/final_data/pos/d0166202573.npy",
+    "data/fhr4/final_data/pos/d0117840861.npy",
+    "data/fhr4/final_data/pos/d0158697138.npy",
+    "data/fhr4/final_data/pos/d0157315799.npy",
+    "data/fhr4/final_data/pos/d0164812779.npy"
+  ],
+  "epoch_9": [
+    "data/fhr4/final_data/pos/d0165489538.npy",
+    "data/fhr4/final_data/neg/d0125938230.npy",
+    "data/fhr4/final_data/neg/d0161799130.npy",
+    "data/fhr4/final_data/pos/d0156703239.npy",
+    "data/fhr4/final_data/pos/d0124243204.npy",
+    "data/fhr4/final_data/pos/d0165191840.npy",
+    "data/fhr4/final_data/pos/d0166202573.npy",
+    "data/fhr4/final_data/pos/d0158697138.npy",
+    "data/fhr4/final_data/pos/d0157315799.npy",
+    "data/fhr4/final_data/pos/d0164812779.npy",
+    "data/fhr4/final_data/pos/d0161206262.npy"
+  ],
+  "epoch_10": [
+    "data/fhr4/final_data/neg/d0125938230.npy",
+    "data/fhr4/final_data/neg/d0161799130.npy",
+    "data/fhr4/final_data/neg/d0133662610.npy",
+    "data/fhr4/final_data/pos/d0158697138.npy",
+    "data/fhr4/final_data/pos/d0164812779.npy"
+  ],
+  "epoch_11": [
+    "data/fhr4/final_data/neg/d0125938230.npy",
+    "data/fhr4/final_data/neg/d0161799130.npy",
+    "data/fhr4/final_data/pos/d0156703239.npy",
+    "data/fhr4/final_data/pos/d0164812779.npy"
+  ],
+  "epoch_12": [
+    "data/fhr4/final_data/neg/d0125938230.npy",
+    "data/fhr4/final_data/neg/d0161799130.npy",
+    "data/fhr4/final_data/pos/d0152151974.npy",
+    "data/fhr4/final_data/pos/d0164812779.npy"
+  ],
+  "epoch_13": [
+    "data/fhr4/final_data/neg/d0153534140.npy",
+    "data/fhr4/final_data/neg/d0151167719.npy",
+    "data/fhr4/final_data/neg/d0125938230.npy",
+    "data/fhr4/final_data/neg/d0161799130.npy",
+    "data/fhr4/final_data/neg/d0133662610.npy",
+    "data/fhr4/final_data/pos/d0164812779.npy"
+  ],
+  "epoch_14": [
+    "data/fhr4/final_data/neg/d0125938230.npy",
+    "data/fhr4/final_data/neg/d0161799130.npy",
+    "data/fhr4/final_data/pos/d0152151974.npy",
+    "data/fhr4/final_data/pos/d0124243204.npy",
+    "data/fhr4/final_data/pos/d0158697138.npy",
+    "data/fhr4/final_data/pos/d0164812779.npy"
+  ],
+  "epoch_15": [
+    "data/fhr4/final_data/neg/d0125938230.npy",
+    "data/fhr4/final_data/neg/d0161799130.npy",
+    "data/fhr4/final_data/neg/d0133662610.npy",
+    "data/fhr4/final_data/pos/d0164812779.npy"
+  ],
+  "epoch_16": [
+    "data/fhr4/final_data/neg/d0125938230.npy",
+    "data/fhr4/final_data/neg/d0161799130.npy",
+    "data/fhr4/final_data/neg/d0133662610.npy",
+    "data/fhr4/final_data/pos/d0164812779.npy"
+  ],
+  "epoch_17": [
+    "data/fhr4/final_data/neg/d0125938230.npy",
+    "data/fhr4/final_data/neg/d0161799130.npy",
+    "data/fhr4/final_data/neg/d0133662610.npy",
+    "data/fhr4/final_data/pos/d0164812779.npy"
+  ],
+  "epoch_18": [
+    "data/fhr4/final_data/neg/d0125938230.npy",
+    "data/fhr4/final_data/neg/d0161799130.npy",
+    "data/fhr4/final_data/neg/d0133662610.npy",
+    "data/fhr4/final_data/pos/d0164812779.npy"
+  ],
+  "epoch_19": [
+    "data/fhr4/final_data/neg/d0125938230.npy",
+    "data/fhr4/final_data/neg/d0161799130.npy",
+    "data/fhr4/final_data/neg/d0133662610.npy",
+    "data/fhr4/final_data/pos/d0164812779.npy"
+  ],
+  "epoch_20": [
+    "data/fhr4/final_data/neg/d0125938230.npy",
+    "data/fhr4/final_data/neg/d0161799130.npy",
+    "data/fhr4/final_data/neg/d0133662610.npy",
+    "data/fhr4/final_data/pos/d0164812779.npy"
+  ],
+  "epoch_21": [
+    "data/fhr4/final_data/neg/d0125938230.npy",
+    "data/fhr4/final_data/neg/d0161799130.npy",
+    "data/fhr4/final_data/neg/d0133662610.npy",
+    "data/fhr4/final_data/pos/d0164812779.npy"
+  ],
+  "epoch_22": [
+    "data/fhr4/final_data/neg/d0125938230.npy",
+    "data/fhr4/final_data/neg/d0161799130.npy",
+    "data/fhr4/final_data/neg/d0133662610.npy",
+    "data/fhr4/final_data/pos/d0164812779.npy"
+  ],
+  "epoch_23": [
+    "data/fhr4/final_data/neg/d0125938230.npy",
+    "data/fhr4/final_data/neg/d0161799130.npy",
+    "data/fhr4/final_data/neg/d0133662610.npy",
+    "data/fhr4/final_data/pos/d0164812779.npy"
+  ],
+  "epoch_24": [
+    "data/fhr4/final_data/neg/d0125938230.npy",
+    "data/fhr4/final_data/neg/d0161799130.npy",
+    "data/fhr4/final_data/neg/d0133662610.npy",
+    "data/fhr4/final_data/pos/d0164812779.npy"
+  ],
+  "epoch_25": [
+    "data/fhr4/final_data/neg/d0125938230.npy",
+    "data/fhr4/final_data/neg/d0161799130.npy",
+    "data/fhr4/final_data/neg/d0133662610.npy",
+    "data/fhr4/final_data/pos/d0164812779.npy"
+  ],
+  "epoch_26": [
+    "data/fhr4/final_data/neg/d0125938230.npy",
+    "data/fhr4/final_data/neg/d0161799130.npy",
+    "data/fhr4/final_data/neg/d0133662610.npy",
+    "data/fhr4/final_data/pos/d0164812779.npy"
+  ],
+  "epoch_27": [
+    "data/fhr4/final_data/neg/d0125938230.npy",
+    "data/fhr4/final_data/neg/d0161799130.npy",
+    "data/fhr4/final_data/neg/d0133662610.npy",
+    "data/fhr4/final_data/pos/d0164812779.npy"
+  ],
+  "epoch_28": [
+    "data/fhr4/final_data/neg/d0125938230.npy",
+    "data/fhr4/final_data/neg/d0161799130.npy",
+    "data/fhr4/final_data/neg/d0133662610.npy",
+    "data/fhr4/final_data/pos/d0164812779.npy"
+  ],
+  "epoch_29": [
+    "data/fhr4/final_data/neg/d0125938230.npy",
+    "data/fhr4/final_data/neg/d0161799130.npy",
+    "data/fhr4/final_data/neg/d0133662610.npy",
+    "data/fhr4/final_data/pos/d0164812779.npy"
+  ],
+  "epoch_30": [
+    "data/fhr4/final_data/neg/d0129523310.npy",
+    "data/fhr4/final_data/neg/d0125938230.npy",
+    "data/fhr4/final_data/neg/d0161799130.npy",
+    "data/fhr4/final_data/neg/d0133662610.npy",
+    "data/fhr4/final_data/pos/d0164812779.npy"
+  ],
+  "epoch_31": [
+    "data/fhr4/final_data/neg/d0125938230.npy",
+    "data/fhr4/final_data/neg/d0161799130.npy",
+    "data/fhr4/final_data/neg/d0133662610.npy",
+    "data/fhr4/final_data/pos/d0164812779.npy"
+  ],
+  "epoch_32": [
+    "data/fhr4/final_data/neg/d0125938230.npy",
+    "data/fhr4/final_data/neg/d0161799130.npy",
+    "data/fhr4/final_data/neg/d0133662610.npy",
+    "data/fhr4/final_data/pos/d0164812779.npy"
+  ],
+  "epoch_33": [
+    "data/fhr4/final_data/neg/d0125938230.npy",
+    "data/fhr4/final_data/neg/d0161799130.npy",
+    "data/fhr4/final_data/neg/d0133662610.npy",
+    "data/fhr4/final_data/pos/d0164812779.npy"
+  ],
+  "epoch_34": [
+    "data/fhr4/final_data/neg/d0125938230.npy",
+    "data/fhr4/final_data/neg/d0161799130.npy",
+    "data/fhr4/final_data/neg/d0133662610.npy",
+    "data/fhr4/final_data/pos/d0164812779.npy"
+  ],
+  "epoch_35": [
+    "data/fhr4/final_data/neg/d0125938230.npy",
+    "data/fhr4/final_data/neg/d0161799130.npy",
+    "data/fhr4/final_data/neg/d0133662610.npy",
+    "data/fhr4/final_data/pos/d0164812779.npy"
+  ],
+  "epoch_36": [
+    "data/fhr4/final_data/neg/d0125938230.npy",
+    "data/fhr4/final_data/neg/d0161799130.npy",
+    "data/fhr4/final_data/neg/d0133662610.npy",
+    "data/fhr4/final_data/pos/d0164812779.npy"
+  ],
+  "epoch_37": [
+    "data/fhr4/final_data/neg/d0125938230.npy",
+    "data/fhr4/final_data/neg/d0161799130.npy",
+    "data/fhr4/final_data/neg/d0133662610.npy",
+    "data/fhr4/final_data/pos/d0164812779.npy"
+  ],
+  "epoch_38": [
+    "data/fhr4/final_data/neg/d0125938230.npy",
+    "data/fhr4/final_data/neg/d0161799130.npy",
+    "data/fhr4/final_data/neg/d0133662610.npy",
+    "data/fhr4/final_data/pos/d0164812779.npy"
+  ],
+  "epoch_39": [
+    "data/fhr4/final_data/neg/d0125938230.npy",
+    "data/fhr4/final_data/neg/d0161799130.npy",
+    "data/fhr4/final_data/neg/d0133662610.npy",
+    "data/fhr4/final_data/pos/d0164812779.npy"
+  ],
+  "epoch_40": [
+    "data/fhr4/final_data/neg/d0125938230.npy",
+    "data/fhr4/final_data/neg/d0161799130.npy",
+    "data/fhr4/final_data/neg/d0133662610.npy",
+    "data/fhr4/final_data/pos/d0164812779.npy"
+  ]
+}
