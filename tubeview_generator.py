@@ -125,7 +125,7 @@ def process_tubeviews(
         ).to_pil(origin="upper")
         
         # Save with indexed filename
-        output_filename = component_dir / f"tubeview_{current_index:03d}.png"
+        output_filename = component_dir / f"{component_id}_{current_index:03d}.png"
         full_tubeview_reg_hist_eq_PIL.save(output_filename)
         print(f"  Saved: {output_filename}")
     
