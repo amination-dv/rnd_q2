@@ -75,7 +75,6 @@ def process_tubeviews(
         DISTANCE_RANGE = PipeDistanceRange(PipeDistance(PD_START_M), PipeDistance(PD_END_M))
         PD_STEP_LENGTH = None  # PipeDistance(1.0)
         PD_STEP_PADDING = None
-        n_frames_step = 500  # Approximate number of frames per batch
         resolution = PD_STEP_LENGTH or PipeDistance(1.5e-3)
 
         # Process tubeviews
