@@ -14,6 +14,7 @@ def process_tubeviews(
     run_csv: str,
     output_dir: str,
     offset: float = 1.0,
+    format: str = "png",
     environment: str = "prod",
 ):
     """
@@ -56,7 +57,7 @@ def process_tubeviews(
         mttv = MultiTrackTubeview(
             session=session,
             tracks=tracks,
-            tubeview_engine="TubeView",
+            tubeview_engine="Nautilis",
             tubeview_engine_kwargs={"masking": "OD"},
         )
         for _, row in tqdm(group.iterrows(), total=nrows, leave=False):
@@ -74,20 +75,17 @@ def process_tubeviews(
             # Create component-specific output directory
             component_dir = output_path / component_id
             component_dir.mkdir(parents=True, exist_ok=True)
-            output_filename_nc = (
-                component_dir / f"{inspection_id}_{component_id}_{current_index:03d}.nc"
-            )
-            output_filename_png = (
+            output_filename = (
                 component_dir
-                / f"{inspection_id}_{component_id}_{current_index:03d}.png"
+                / f"{inspection_id}_{component_id}_{current_index:03d}.{format}"
             )
-            if output_filename_nc.exists():
-                print(f"Skipping existing file: {output_filename_nc}")
+            if output_filename.exists():
+                print(f"Skipping existing file: {output_filename}")
                 continue
 
-            # print(
-            #     f"Processing {component_id} (index: {current_index}) - Inspection: {inspection_id}"
-            # )
+            print(
+                f"Processing {component_id} (index: {current_index}) - Inspection: {inspection_id}"
+            )
             # Define distance range
             PD_START_M = pipe_distance_center - offset
             PD_END_M = pipe_distance_center + offset
@@ -151,14 +149,16 @@ def process_tubeviews(
                 y_coord="tool_lateral_deg",
                 rasterize_agg="linear",
             )
-            # full_tubeview.to_netcdf(output_filename_nc)
-            full_tubeview_reg_hist_eq_PIL = dataarray_to_image(
-                full_tubeview.sortby("tool_lateral_deg").T, how="eq_hist"
-            ).to_pil(origin="upper")
 
             # Save with indexed filename
-            full_tubeview_reg_hist_eq_PIL.save(output_filename_png)
-            print(f"  Saved: {output_filename_nc}")
+            if format == "png":
+                full_tubeview_reg_hist_eq_PIL = dataarray_to_image(
+                    full_tubeview.sortby("tool_lateral_deg").T, how="eq_hist"
+                ).to_pil(origin="upper")
+                full_tubeview_reg_hist_eq_PIL.save(output_filename)
+            else:
+                full_tubeview.to_netcdf(output_filename)
+            print(f"  Saved: {output_filename}")
 
     print(f"\nProcessing complete! Processed {len(run_df)} tubeviews.")
     print(f"Output saved to: {output_path}")
@@ -190,6 +190,14 @@ def main():
     )
 
     parser.add_argument(
+        "--format",
+        type=str,
+        default="png",
+        choices=["png", "nc"],
+        help="Output file format (either png or nc)",
+    )
+
+    parser.add_argument(
         "--env",
         type=str,
         default="prod",
@@ -208,6 +216,7 @@ def main():
         run_csv=args.csv,
         output_dir=args.output_dir,
         offset=args.offset,
+        format=args.format,
         environment=args.env,
     )
 
