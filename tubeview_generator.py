@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import argparse
 import os
+import numpy as np
+from PIL import Image
 from pathlib import Path
 
 import pandas as pd
@@ -102,7 +104,7 @@ def process_tubeviews(
                 step_length=PD_STEP_LENGTH,
                 step_padding=PD_STEP_PADDING,
                 show_progress=False,
-                max_workers=1,
+                max_workers=2,
             )
 
             # Rasterize tubeviews
@@ -147,17 +149,20 @@ def process_tubeviews(
                 tubeviews_da,
                 mapping="interpolate",
                 y_coord="tool_lateral_deg",
-                rasterize_agg="linear",
             )
 
-            # Save with indexed filename
-            if format == "png":
-                full_tubeview_reg_hist_eq_PIL = dataarray_to_image(
-                    full_tubeview.sortby("tool_lateral_deg").T, how="eq_hist"
-                ).to_pil(origin="upper")
-                full_tubeview_reg_hist_eq_PIL.save(output_filename)
-            else:
-                full_tubeview.to_netcdf(output_filename)
+            img_norm = (full_tubeview.sortby("tool_lateral_deg").T).to_numpy()
+            img_norm = (2**16 - 1) * img_norm / np.nanmax(img_norm)
+            median = np.nanmedian(img_norm)
+            std = np.nanstd(img_norm)
+            sigma = 3
+
+            img_16_bit = (img_norm - (median - sigma * std)) / (2 * sigma * std)
+            img_16_bit = np.clip(
+                np.round((2**16 - 1) * img_16_bit), 0, (2**16 - 1)
+            ).astype(np.uint16)
+            image_pil = Image.fromarray(img_16_bit, mode="I;16")
+            image_pil.save(output_filename)
             print(f"  Saved: {output_filename}")
 
     print(f"\nProcessing complete! Processed {len(run_df)} tubeviews.")
@@ -171,13 +176,13 @@ def main():
     )
 
     parser.add_argument(
-        "csv",
+        "--csv",
         type=str,
         help="Path to CSV file containing inspection data (must have columns: inspection_id, name, pipeline_distance)",
     )
 
     parser.add_argument(
-        "output_dir",
+        "--output_dir",
         type=str,
         help="Output directory for saving tubeview images",
     )
@@ -193,8 +198,8 @@ def main():
         "--format",
         type=str,
         default="png",
-        choices=["png", "nc"],
-        help="Output file format (either png or nc)",
+        choices=["png", "jpg"],
+        help="Output file format (either png or jpg)",
     )
 
     parser.add_argument(
