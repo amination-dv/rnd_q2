@@ -4,9 +4,7 @@ ILI Dataset for CorrelationFields training.
 Loads aligned (correlated) tubeview images and generates self-supervised
 alignment training data by artificially shifting individual sensor tracks.
 
-Key difference from the classification variant: the regression target is now
-a **dense shift field** (B, 1, H, W) — not a 22-element vector. Every pixel
-in the field carries the shift value for its track band.
+Returns a per-track shift vector (num_tracks,) as the regression target.
 """
 
 import random
@@ -21,12 +19,11 @@ from utils import apply_track_shifts
 
 class ILIDataset(ImageFolder):
     """
-    ILI dataset for dense shift field regression.
+    ILI dataset for per-track shift regression.
 
     Each sample returns::
 
-        (shifted_image, target_shift_field, target_shift_vector,
-         original_image, path)
+        (shifted_image, target_shift_vector, original_image, path)
 
     Args:
         root: ImageFolder-layout directory of aligned images.
@@ -69,30 +66,15 @@ class ILIDataset(ImageFolder):
         # Apply shifts → broken (uncorrelated) input
         shifted_image = apply_track_shifts(image, shift_vector, self.num_tracks)
 
-        # Build dense GT shift field: inverse shifts expanded to (1, H, W)
+        # Target: inverse shifts to undo the corruption
         target_shift_vector = -shift_vector
-        target_shift_field = self._vector_to_field(target_shift_vector)
 
         return (
             shifted_image,          # Model input       (1, H, W)
-            target_shift_field,     # Dense GT           (1, H, W)
             target_shift_vector,    # Per-track GT       (num_tracks,)
             original_image,         # Aligned GT         (1, H, W)
             path,                   # File path          (str)
         )
-
-    # ------------------------------------------------------------------
-    # Helpers
-    # ------------------------------------------------------------------
-
-    def _vector_to_field(self, shift_vector):
-        """Expand a (num_tracks,) shift vector to a dense (1, H, W) field."""
-        field = torch.zeros(1, self.img_height, self.img_width)
-        for i in range(self.num_tracks):
-            start = i * self.track_height
-            end = start + self.track_height
-            field[0, start:end, :] = shift_vector[i]
-        return field
 
     @staticmethod
     def _apply_augmentations(image):

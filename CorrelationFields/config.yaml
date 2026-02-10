@@ -1,16 +1,14 @@
 # =============================================================================
 # CorrelationFields Configuration
 # =============================================================================
-# Dense shift field regression for ILI tubeview track alignment.
-# Architecture follows PerspectiveFields: MiT backbone + dense decoder.
+# Per-track shift regression for ILI tubeview track alignment.
+# Architecture: MiT backbone → multi-scale GAP → MLP → (B, 22) shifts.
 
 # --- Data ---
 data_dir: ./dataset
 num_tracks: 22
 max_shift: 15                    # Max pixel shift per track for self-supervised augmentation
 # img_height must be divisible by BOTH num_tracks (22) AND 32 (backbone stride).
-# LCM(22, 32) = 352. Valid heights: 352, 704, 1056, ...
-# Original data is 1334×1906 (W×H). 704 gives ~2.7× downscale with 32 px/track.
 img_height: 704                  # 22 tracks × 32 px/track
 # img_width must be divisible by 32. 480 preserves aspect ratio (~0.68 vs 0.70 original).
 img_width: 480                   # 15 × 32
@@ -19,9 +17,9 @@ val_size: 0.2
 random_state: 42
 
 # --- Model ---
-backbone: mit_b0                 # 'mit_b0' (lightweight) or 'mit_b3' (full, matches PerspectiveFields)
+backbone: mit_b0                 # 'mit_b0' (lightweight) or 'mit_b3' (full)
 in_channels: 1                   # Grayscale ILI data
-embedding_dim: 768               # Common projection dim in the decoder
+hidden_dim: 256                  # MLP regression head hidden dimension
 freeze_backbone: false
 
 # --- Training ---
@@ -34,12 +32,10 @@ beta1: 0.9
 beta2: 0.999
 
 # --- Loss weights ---
-# L_total = w_l1 * L1_field + w_msgil * MSGIL_field + w_msg * MSGLoss_image
+# L_total = w_l1 * L1(pred_shifts, gt_shifts) + w_msg * MSGLoss(reconstructed, gt)
 l1_loss_weight: 1.0
-msgil_loss_weight: 0.1           # Multi-scale gradient loss on shift field
-use_msgil_loss: true
-msg_loss_weight: 0.1             # Image-level MSGLoss (optional, more expensive)
-use_msg_loss: false              # Set true to enable auxiliary image-level MSGLoss
+msg_loss_weight: 0.1             # Image-level MSGLoss on reconstructed aligned image
+use_msg_loss: true               # Enable MSGLoss (reconstructed vs GT aligned image)
 
 # --- Logging ---
 img_log_step: 100                # Log sample images every N batches

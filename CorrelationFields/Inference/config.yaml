@@ -8,7 +8,7 @@ in_channels: 1
 img_height: 704
 img_width: 480
 num_tracks: 22
-embedding_dim: 768
+hidden_dim: 256
 
 # Trained model weights
 model_path: "../checkpoints/model.pt"

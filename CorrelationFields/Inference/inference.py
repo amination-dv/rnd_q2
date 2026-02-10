@@ -2,8 +2,8 @@
 CorrelationFields Inference Pipeline.
 
 Given an uncorrelated ILI tubeview image (already cropped by a separate
-object detection model), predict the dense shift field and extract per-track
-shifts to reconstruct the aligned image.
+object detection model), predict per-track shifts and reconstruct the
+aligned image.
 
 Usage:
     python inference.py --image path/to/image.png --config config.yaml
@@ -15,7 +15,6 @@ import sys
 
 import numpy as np
 import torch
-import torch.nn.functional as F
 from PIL import Image
 
 # Allow imports from parent directory
@@ -36,7 +35,7 @@ def load_model(config):
         in_channels=config.get('in_channels', 1),
         backbone_name=config['backbone'],
         num_tracks=config['num_tracks'],
-        embedding_dim=config.get('embedding_dim', 768),
+        hidden_dim=config.get('hidden_dim', 256),
     )
     state_dict = torch.load(config['model_path'], map_location=DEVICE)
     model.load_state_dict(state_dict)
@@ -52,11 +51,6 @@ def load_model(config):
 def preprocess_image(image_path, img_height, img_width):
     """
     Load a grayscale image, resize, and convert to tensor.
-
-    Args:
-        image_path: path to the image.
-        img_height: target height.
-        img_width: target width.
 
     Returns:
         tensor: (1, 1, H, W) float tensor.
@@ -74,21 +68,19 @@ def preprocess_image(image_path, img_height, img_width):
 # ---------------------------------------------------------------------------
 
 @torch.no_grad()
-def predict_shift_field(model, image_tensor):
+def predict_shifts(model, image_tensor):
     """
-    Run the model to predict the dense shift field.
+    Run the model to predict per-track shifts.
 
     Args:
         model: CorrelationNet in eval mode.
         image_tensor: (1, 1, H, W) input.
 
     Returns:
-        shift_field: (1, 1, H, W) predicted dense shift field.
-        track_shifts: (num_tracks,) per-track average shifts.
+        track_shifts: (num_tracks,) per-track shifts in pixels.
     """
-    shift_field = model(image_tensor)  # (1, 1, H, W)
-    track_shifts = model.extract_track_shifts(shift_field)  # (1, num_tracks)
-    return shift_field, track_shifts.squeeze(0)
+    shifts = model(image_tensor)  # (1, num_tracks)
+    return shifts.squeeze(0)
 
 
 def reconstruct_aligned(image_tensor, track_shifts, num_tracks):
@@ -112,49 +104,6 @@ def reconstruct_aligned(image_tensor, track_shifts, num_tracks):
 
 
 # ---------------------------------------------------------------------------
-# Sliding-window inference for long strips
-# ---------------------------------------------------------------------------
-
-@torch.no_grad()
-def inference_on_strip(model, long_image, config, stride=None):
-    """
-    Sliding-window inference on a long image strip.
-
-    Args:
-        model: CorrelationNet in eval mode.
-        long_image: (1, 1, H, W_long) preprocessed long strip.
-        config: configuration dict.
-        stride: step size in pixels (default: img_width // 2).
-
-    Returns:
-        all_fields: list of (1, H, window_W) shift field predictions.
-        all_track_shifts: list of (num_tracks,) shift vectors.
-        positions: list of window center x-positions.
-    """
-    window_width = config['img_width']
-    if stride is None:
-        stride = window_width // 2
-
-    _, _, H, W = long_image.shape
-    if W < window_width:
-        long_image = F.pad(long_image, (0, window_width - W), mode='constant', value=0)
-        W = window_width
-
-    all_fields = []
-    all_track_shifts = []
-    positions = []
-
-    for start_x in range(0, W - window_width + 1, stride):
-        window = long_image[:, :, :, start_x:start_x + window_width]
-        shift_field, track_shifts = predict_shift_field(model, window)
-        all_fields.append(shift_field.cpu())
-        all_track_shifts.append(track_shifts.cpu())
-        positions.append(start_x + window_width // 2)
-
-    return all_fields, all_track_shifts, positions
-
-
-# ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
 
@@ -169,7 +118,7 @@ def main(args):
         args.image, config['img_height'], config['img_width'],
     )
 
-    shift_field, track_shifts = predict_shift_field(model, image_tensor)
+    track_shifts = predict_shifts(model, image_tensor)
 
     print(f"Predicted per-track shifts (pixels):")
     for i, s in enumerate(track_shifts.cpu().numpy()):
@@ -186,10 +135,10 @@ def main(args):
     aligned_np = (aligned.squeeze().numpy() * 255).clip(0, 255).astype(np.uint8)
     Image.fromarray(aligned_np).save(os.path.join(out_dir, f"{base}_aligned.png"))
 
-    field_np = shift_field.squeeze().cpu().numpy()
-    np.save(os.path.join(out_dir, f"{base}_shift_field.npy"), field_np)
+    shifts_np = track_shifts.cpu().numpy()
+    np.save(os.path.join(out_dir, f"{base}_shifts.npy"), shifts_np)
 
-    print(f"Saved aligned image and shift field to {out_dir}")
+    print(f"Saved aligned image and shifts to {out_dir}")
 
 
 if __name__ == '__main__':
