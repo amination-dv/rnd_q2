@@ -1,0 +1,37 @@
+# =============================================================================
+# ILI Component Detection Configuration (Detectron2)
+# =============================================================================
+# Faster R-CNN with ResNeXt-101-FPN for detecting taps, flanges, bends, and tees.
+
+# --- Data ---
+data_dir: ./
+train_json: train.json
+test_json: test.json
+train_split: 0.9
+random_state: 111
+
+# --- Model ---
+model_config: COCO-Detection/faster_rcnn_X_101_32x8d_FPN_3x.yaml
+num_classes: 4
+class_names: ["tap", "flange", "bend", "tee"]
+freeze_at: 0
+
+# --- Training ---
+max_iter: 10000
+batch_size: 1
+num_workers: 4
+lr: 0.00025
+lr_scheduler: WarmupMultiStepLR
+steps: []
+roi_heads_batch_size: 512
+score_thresh_test: 0.6
+
+# --- Evaluation ---
+eval_period: 100
+
+# --- Logging ---
+img_log_step: 100
+checkpoint_period: 500
+
+# --- Device ---
+device: [0]
