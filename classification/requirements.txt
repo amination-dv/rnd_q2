@@ -1,0 +1,17 @@
+albumentations
+boto3
+kornia
+lightning
+matplotlib
+opencv-python
+pillow
+python-dotenv
+pyyaml
+scikit-learn
+scipy
+seaborn
+torch
+torchvision
+torchaudio
+tqdm
+wandb

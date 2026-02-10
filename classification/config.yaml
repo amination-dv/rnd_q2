@@ -1,0 +1,47 @@
+# =============================================================================
+# ILI Strip-ViT Configuration
+# =============================================================================
+# Multi-task classification + alignment for In-Line Inspection tubeview data.
+
+# --- Data ---
+data_dir: ./dataset_10
+num_tracks: 22
+max_shift: 15                    # Max pixel shift per track for self-supervised augmentation
+background_class: background     # Folder name for background class (mask=0 for regression)
+img_height: 440                  # Must be divisible by num_tracks (22 * 20)
+img_width: 280                   # Must be divisible by patch_width (14 * 20)
+train_size: 0.7
+val_size: 0.2
+random_state: 42
+
+# --- Model ---
+backbone: dinov2_vits14          # DINOv2-Small (embed_dim=384, 12 blocks)
+in_channels: 1                   # Grayscale ILI data
+patch_width: 14                  # Token width in pixels (matches DINOv2 patch size)
+num_classes: 4                   # [Tee, Stopple, Weld, Background] or per dataset
+train_backbone: true
+unfreeze_last_n_blocks: 4        # Fine-tune last 4 transformer blocks
+intermediate_block_idx: 7        # 0-indexed; Block 8 of 12 for alignment head
+
+# --- Training ---
+max_epochs: 100
+batch_size: 16
+num_workers: 4
+lr: 1.0e-4
+weight_decay: 1.0e-5
+beta1: 0.9
+beta2: 0.999
+
+# --- Loss weights ---
+# L_total = ce_weight * L_class + reg_weight * (L_reg * M) + msg_weight * (L_msg * M)
+ce_loss_weight: 1.0
+reg_loss_weight: 1.0
+msg_loss_weight: 0.1
+use_msg_loss: true              # Set true to enable auxiliary MSGLoss
+
+# --- Logging ---
+img_log_step: 100                # Log sample images every N batches
+lr_log_step: 10                  # Log learning rate every N validation epochs
+
+# --- Hardware ---
+device: [0]
