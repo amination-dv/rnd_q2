@@ -1,0 +1,15 @@
+kornia
+lightning
+matplotlib
+numpy
+pillow
+python-dotenv
+pyyaml
+scikit-learn
+scipy
+seaborn
+timm
+torch
+torchvision
+torchaudio
+wandb

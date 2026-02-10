@@ -1,0 +1,49 @@
+# =============================================================================
+# CorrelationFields Configuration
+# =============================================================================
+# Dense shift field regression for ILI tubeview track alignment.
+# Architecture follows PerspectiveFields: MiT backbone + dense decoder.
+
+# --- Data ---
+data_dir: ./dataset
+num_tracks: 22
+max_shift: 15                    # Max pixel shift per track for self-supervised augmentation
+# img_height must be divisible by BOTH num_tracks (22) AND 32 (backbone stride).
+# LCM(22, 32) = 352. Valid heights: 352, 704, 1056, ...
+# Original data is 1334×1906 (W×H). 704 gives ~2.7× downscale with 32 px/track.
+img_height: 704                  # 22 tracks × 32 px/track
+# img_width must be divisible by 32. 480 preserves aspect ratio (~0.68 vs 0.70 original).
+img_width: 480                   # 15 × 32
+train_size: 0.7
+val_size: 0.2
+random_state: 42
+
+# --- Model ---
+backbone: mit_b0                 # 'mit_b0' (lightweight) or 'mit_b3' (full, matches PerspectiveFields)
+in_channels: 1                   # Grayscale ILI data
+embedding_dim: 768               # Common projection dim in the decoder
+freeze_backbone: false
+
+# --- Training ---
+max_epochs: 100
+batch_size: 16
+num_workers: 4
+lr: 1.0e-4
+weight_decay: 1.0e-5
+beta1: 0.9
+beta2: 0.999
+
+# --- Loss weights ---
+# L_total = w_l1 * L1_field + w_msgil * MSGIL_field + w_msg * MSGLoss_image
+l1_loss_weight: 1.0
+msgil_loss_weight: 0.1           # Multi-scale gradient loss on shift field
+use_msgil_loss: true
+msg_loss_weight: 0.1             # Image-level MSGLoss (optional, more expensive)
+use_msg_loss: false              # Set true to enable auxiliary image-level MSGLoss
+
+# --- Logging ---
+img_log_step: 100                # Log sample images every N batches
+lr_log_step: 10                  # Log learning rate every N validation epochs
+
+# --- Hardware ---
+device: [0]
