@@ -95,6 +95,13 @@ class TrainerModule:
         # Evaluation
         self.cfg.TEST.EVAL_PERIOD = self.config.get('eval_period', 100)
 
+        # ILI augmentations
+        self.cfg.NUM_TRACKS = self.config.get('num_tracks', 22)
+        self.cfg.MAX_TRACK_SHIFT = self.config.get('max_track_shift', 15)
+        self.cfg.TRACK_SHIFT_PROB = self.config.get('track_shift_prob', 0.5)
+        self.cfg.CIRCULAR_ROLL_PROB = self.config.get('circular_roll_prob', 0.3)
+        self.cfg.SPLIT_WRAPPED_BOXES = self.config.get('split_wrapped_boxes', True)
+
         # Device
         devices = self.config.get('device', [0])
         if isinstance(devices, list) and len(devices) > 0:

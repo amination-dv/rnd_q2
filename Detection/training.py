@@ -1,7 +1,8 @@
 """
-Custom Detectron2 Trainer with WandB logging.
+Custom Detectron2 Trainer with WandB logging and ILI track augmentations.
 
 Extends DefaultTrainer to:
+    - Use ILIDatasetMapper with track shift and circular roll augmentations.
     - Log metrics to WandB via a custom EventWriter.
     - Periodically log sample prediction visualisations.
     - Run test-time evaluation with visualisation.
@@ -16,9 +17,11 @@ import wandb
 import torch
 from detectron2.engine import DefaultTrainer
 from detectron2.evaluation import COCOEvaluator, DatasetEvaluators, inference_on_dataset
-from detectron2.data import build_detection_test_loader, DatasetCatalog, MetadataCatalog
+from detectron2.data import build_detection_train_loader, build_detection_test_loader
+from detectron2.data import DatasetCatalog, MetadataCatalog
 from detectron2.utils.events import EventWriter, get_event_storage
 
+from data import ILIDatasetMapper
 from utils import log_predictions_to_wandb
 
 LOGGER = logging.getLogger(__name__)
@@ -52,12 +55,27 @@ class WandbWriter(EventWriter):
 # ---------------------------------------------------------------------------
 
 class DetectionTrainer(DefaultTrainer):
-    """Detectron2 DefaultTrainer extended with WandB image logging."""
+    """Detectron2 DefaultTrainer extended with ILI augmentations and WandB logging."""
 
     def __init__(self, cfg, config_dict):
         self.config_dict = config_dict
         self.img_log_step = config_dict.get('img_log_step', 100)
         super().__init__(cfg)
+
+    # -- Train loader with ILI mapper ---------------------------------------
+
+    @classmethod
+    def build_train_loader(cls, cfg):
+        mapper = ILIDatasetMapper.from_config(
+            cfg,
+            is_train=True,
+            num_tracks=getattr(cfg, 'NUM_TRACKS', 22),
+            max_track_shift=getattr(cfg, 'MAX_TRACK_SHIFT', 15),
+            track_shift_prob=getattr(cfg, 'TRACK_SHIFT_PROB', 0.5),
+            circular_roll_prob=getattr(cfg, 'CIRCULAR_ROLL_PROB', 0.3),
+            split_wrapped_boxes=getattr(cfg, 'SPLIT_WRAPPED_BOXES', True),
+        )
+        return build_detection_train_loader(cfg, mapper=mapper)
 
     # -- Evaluator ----------------------------------------------------------
 

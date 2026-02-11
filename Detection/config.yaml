@@ -10,6 +10,13 @@ test_json: test.json
 train_split: 0.9
 random_state: 111
 
+# --- ILI augmentations (track-based, tubeview) ---
+num_tracks: 22
+max_track_shift: 15
+track_shift_prob: 0.5
+circular_roll_prob: 0.3
+split_wrapped_boxes: true
+
 # --- Model ---
 model_config: COCO-Detection/faster_rcnn_X_101_32x8d_FPN_3x.yaml
 num_classes: 6
