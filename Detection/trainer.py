@@ -55,9 +55,10 @@ class TrainerModule:
 
     def setup(self):
         """Register datasets, build Detectron2 cfg, init WandB."""
-        # Datasets
-        n_total, n_train, n_val = register_detection_datasets(self.config)
+        # Datasets (category mapping derived from train.json)
+        n_total, n_train, n_val, num_classes, class_names = register_detection_datasets(self.config)
         print(f"Datasets registered: total={n_total}, train={n_train}, val={n_val}")
+        print(f"Classes ({num_classes}): {class_names}")
 
         # Detectron2 config
         self.cfg = get_cfg()
@@ -77,7 +78,7 @@ class TrainerModule:
         self.cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url(model_config)
         self.cfg.MODEL.FREEZE_AT = self.config.get('freeze_at', 0)
         self.cfg.MODEL.ROI_HEADS.BATCH_SIZE_PER_IMAGE = self.config.get('roi_heads_batch_size', 512)
-        self.cfg.MODEL.ROI_HEADS.NUM_CLASSES = self.config.get('num_classes', 4)
+        self.cfg.MODEL.ROI_HEADS.NUM_CLASSES = num_classes
         self.cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = self.config.get('score_thresh_test', 0.6)
 
         # Solver

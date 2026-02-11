@@ -1,10 +1,10 @@
 # =============================================================================
 # ILI Component Detection Configuration (Detectron2)
 # =============================================================================
-# Faster R-CNN with ResNeXt-101-FPN for detecting taps, flanges, bends, and tees.
+# Faster R-CNN with ResNeXt-101-FPN for ILI component detection.
 
 # --- Data ---
-data_dir: ./
+data_dir: Data
 train_json: train.json
 test_json: test.json
 train_split: 0.9
@@ -12,8 +12,8 @@ random_state: 111
 
 # --- Model ---
 model_config: COCO-Detection/faster_rcnn_X_101_32x8d_FPN_3x.yaml
-num_classes: 4
-class_names: ["tap", "flange", "bend", "tee"]
+num_classes: 6
+class_names: ["Fitting", "Sleeve", "Valve", "stopple", "tap", "tee"]
 freeze_at: 0
 
 # --- Training ---
