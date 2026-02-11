@@ -12,7 +12,7 @@ from detectron2.config import configurable
 from detectron2.data import detection_utils as utils
 from detectron2.data import transforms as T
 
-from Dataset.augmentations import apply_track_shift, apply_circular_roll
+from .augmentations import apply_track_shift, apply_circular_roll
 
 
 class ILIDatasetMapper:

@@ -55,9 +55,9 @@ class TrainerModule:
 
     def setup(self):
         """Register datasets, build Detectron2 cfg, init WandB."""
-        # Datasets (category mapping derived from train.json)
-        n_total, n_train, n_val, num_classes, class_names = register_detection_datasets(self.config)
-        print(f"Datasets registered: total={n_total}, train={n_train}, val={n_val}")
+        # Datasets (category mapping derived from config class_names)
+        n_total, n_train, n_val, n_test, num_classes, class_names = register_detection_datasets(self.config)
+        print(f"Datasets registered: total={n_total}, train={n_train}, val={n_val}, test={n_test}")
         print(f"Classes ({num_classes}): {class_names}")
 
         # Detectron2 config
@@ -69,10 +69,10 @@ class TrainerModule:
         )
         self.cfg.merge_from_file(model_zoo.get_config_file(model_config))
 
-        # Datasets
+        # Datasets: train/valid for training; valid for periodic eval; test for final eval only
         self.cfg.DATASETS.TRAIN = ("data_detection_train",)
         self.cfg.DATASETS.VALID = ("data_detection_valid",)
-        self.cfg.DATASETS.TEST = ("data_detection_test",)
+        self.cfg.DATASETS.TEST = ("data_detection_valid",)  # Periodic eval uses valid; test only at end
 
         # Model
         self.cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url(model_config)
@@ -133,6 +133,8 @@ class TrainerModule:
             "dataset/valid": len(DatasetCatalog.get("data_detection_valid")),
             "dataset/test": len(DatasetCatalog.get("data_detection_test")),
         })
+        wandb.define_metric("val/*", step_metric="iter")
+        wandb.define_metric("test/*", step_metric="iter")
 
         trainer = DetectionTrainer(self.cfg, self.config)
 
@@ -148,14 +150,17 @@ class TrainerModule:
 
         trainer.train()
 
-        # Evaluate best model
+        # Evaluate best model on held-out test set
         best_path = get_last_checkpoint(self.checkpoint_dir, return_best=True)
         if best_path:
-            print(f"Testing best model: {best_path}")
+            print(f"Evaluating best model on test set: {best_path}")
             self.cfg.MODEL.WEIGHTS = best_path
             state = torch.load(best_path, map_location="cpu")
             trainer.model.load_state_dict(state["model"])
-            trainer.test_with_visualization(self.cfg, trainer.model)
+            trainer.test_with_visualization(
+                self.cfg, trainer.model,
+                test_datasets=["data_detection_test"],
+            )
 
         wandb.finish()
 
@@ -179,7 +184,10 @@ class TrainerModule:
 
         trainer = DetectionTrainer(self.cfg, self.config)
         trainer.resume_or_load(resume=False)
-        trainer.test_with_visualization(self.cfg, trainer.model)
+        trainer.test_with_visualization(
+            self.cfg, trainer.model,
+            test_datasets=["data_detection_test"],
+        )
 
         wandb.finish()
 

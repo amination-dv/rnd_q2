@@ -5,9 +5,10 @@
 
 # --- Data ---
 data_dir: Data
-train_json: train.json
-test_json: test.json
-train_split: 0.9
+data_json: data.json
+images_folder: images
+train_split: 0.7
+val_split: 0.15
 random_state: 111
 
 # --- ILI augmentations (track-based, tubeview) ---
@@ -20,7 +21,7 @@ split_wrapped_boxes: true
 # --- Model ---
 model_config: COCO-Detection/faster_rcnn_X_101_32x8d_FPN_3x.yaml
 num_classes: 6
-class_names: ["Fitting", "Sleeve", "Valve", "Stopple", "Tap", "Tee"]
+class_names: ["Fitting", "Sleeve", "Valve", "stopple", "tap", "tee"]
 freeze_at: 0
 
 # --- Training ---
