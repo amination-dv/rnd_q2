@@ -25,8 +25,10 @@ JSON format (per entry):
 
 import os
 import json
+from collections import Counter
 
 import numpy as np
+from sklearn.model_selection import train_test_split
 from detectron2.structures import BoxMode
 from detectron2.data import MetadataCatalog, DatasetCatalog
 
@@ -134,14 +136,34 @@ def register_detection_datasets(config):
     # Build category mapping from config class_names; annotations not in this list are ignored
     category_mapping = build_category_from_config(class_names)
 
-    # Compute train/val split indices
-    rs = np.random.RandomState(random_state)
+    # Load full dataset and compute stratified train/val split by dominant category per image
     full_train = get_detection_data(data_dir, train_json, "train", category_mapping=category_mapping)
     n_dataset = len(full_train)
-    n_train = int(n_dataset * train_split)
-    inds = rs.permutation(n_dataset)
-    train_inds = inds[:n_train]
-    valid_inds = inds[n_train:]
+
+    # Stratification label: dominant (most frequent) category per image; empty images use 0
+    stratify_labels = []
+    for d in full_train:
+        annos = d.get("annotations", [])
+        if not annos:
+            stratify_labels.append(0)
+        else:
+            cids = [a["category_id"] for a in annos]
+            stratify_labels.append(Counter(cids).most_common(1)[0][0])
+
+    try:
+        train_inds, valid_inds = train_test_split(
+            np.arange(n_dataset),
+            train_size=train_split,
+            stratify=stratify_labels,
+            random_state=random_state,
+        )
+    except ValueError:
+        # Fallback: stratification fails if a class has <2 samples
+        rs = np.random.RandomState(random_state)
+        inds = rs.permutation(n_dataset)
+        n_train = int(n_dataset * train_split)
+        train_inds, valid_inds = inds[:n_train], inds[n_train:]
+    n_train = len(train_inds)
 
     # Unregister if already registered (useful for re-runs)
     for name in ["data_detection_train", "data_detection_valid", "data_detection_test"]:

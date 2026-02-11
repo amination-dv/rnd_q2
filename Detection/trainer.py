@@ -89,8 +89,11 @@ class TrainerModule:
         self.cfg.SOLVER.LR_SCHEDULER_NAME = self.config.get('lr_scheduler', 'WarmupMultiStepLR')
         self.cfg.SOLVER.CHECKPOINT_PERIOD = self.config.get('checkpoint_period', 500)
 
-        # Data loader
+        # Data loader: class-balanced sampling so rare classes are seen more often
         self.cfg.DATALOADER.NUM_WORKERS = self.config.get('num_workers', 4)
+        self.cfg.DATALOADER.SAMPLER_TRAIN = "RepeatFactorTrainingSampler"
+        self.cfg.DATALOADER.REPEAT_THRESHOLD = self.config.get('repeat_threshold', 0.001)
+        self.cfg.DATALOADER.REPEAT_SQRT = self.config.get('repeat_sqrt', True)
 
         # Evaluation
         self.cfg.TEST.EVAL_PERIOD = self.config.get('eval_period', 100)
