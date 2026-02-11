@@ -66,7 +66,8 @@ class DetectionTrainer(DefaultTrainer):
 
     @classmethod
     def build_train_loader(cls, cfg):
-        mapper = ILIDatasetMapper.from_config(
+        # Use ILIDatasetMapper(cfg, ...) not .from_config() — from_config returns kwargs dict, not instance
+        mapper = ILIDatasetMapper(
             cfg,
             is_train=True,
             num_tracks=getattr(cfg, 'NUM_TRACKS', 22),
@@ -110,19 +111,20 @@ class DetectionTrainer(DefaultTrainer):
             sample = random.choice(dataset_dicts)
 
             self.model.eval()
-            with torch.no_grad():
-                img = cv2.imread(sample["file_name"])
-                height, width = img.shape[:2]
-                image = self.aug.get_transform(img).apply_image(img)
-                image = torch.as_tensor(image.astype("float32").transpose(2, 0, 1))
-                inputs = [{"image": image, "height": height, "width": width}]
-                outputs = self.model(inputs)[0]
-            self.model.train()
-
-            wandb_dict = log_predictions_to_wandb(outputs, sample, metadata, phase="train")
-            wandb.log(wandb_dict, step=self.iter)
+            try:
+                with torch.no_grad():
+                    img = cv2.imread(sample["file_name"])
+                    height, width = img.shape[:2]
+                    image = torch.as_tensor(img.astype("float32").transpose(2, 0, 1))
+                    inputs = [{"image": image, "height": height, "width": width}]
+                    outputs = self.model(inputs)[0]
+                wandb_dict = log_predictions_to_wandb(outputs, sample, metadata, phase="train")
+                wandb.log(wandb_dict, step=self.iter)
+            finally:
+                self.model.train()
         except Exception as e:
             LOGGER.warning(f"Failed to log training sample: {e}")
+            self.model.train()
 
     # -- Test with visualisation --------------------------------------------
 
