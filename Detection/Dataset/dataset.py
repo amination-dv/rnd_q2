@@ -31,28 +31,16 @@ from detectron2.structures import BoxMode
 from detectron2.data import MetadataCatalog, DatasetCatalog
 
 
-def build_category_from_json(data_dir, json_file):
+def build_category_from_config(class_names):
     """
-    Build category name → id mapping from a Labelbox JSON file.
+    Build category name → id mapping from config class_names.
 
-    Scans all annotations and collects unique object names. Returns a dict
-    mapping each name to a stable index (sorted alphabetically for reproducibility).
+    Uses the ordered list from config as source of truth. Annotations whose
+    class is not in class_names are ignored during data loading.
     """
-    json_path = os.path.join(data_dir, json_file)
-    with open(json_path) as f:
-        imgs_anns = json.load(f)
-
-    names = set()
-    for v in imgs_anns:
-        try:
-            project_id = list(v["projects"])[0]
-            objs = v["projects"][project_id]["labels"][0]["annotations"]["objects"]
-            for obj in objs:
-                names.add(obj["name"])
-        except (KeyError, IndexError):
-            continue
-
-    return {name: i for i, name in enumerate(sorted(names))}
+    if not class_names:
+        raise ValueError("class_names must be a non-empty list")
+    return {name: i for i, name in enumerate(class_names)}
 
 
 def get_detection_data(data_dir, json_file, split_type, split_indices=None, category_mapping=None):
@@ -64,7 +52,7 @@ def get_detection_data(data_dir, json_file, split_type, split_indices=None, cate
         json_file: Name of the JSON annotation file.
         split_type: 'train', 'valid', or 'test'.
         split_indices: Optional array of indices for train/val splitting.
-        category_mapping: Dict mapping class name → category_id (from build_category_from_json).
+        category_mapping: Dict mapping class name → category_id (from build_category_from_config).
 
     Returns:
         List of dicts in Detectron2 standard dataset format.
@@ -139,10 +127,12 @@ def register_detection_datasets(config):
     test_json = config['test_json']
     train_split = config.get('train_split', 0.9)
     random_state = config.get('random_state', 111)
+    class_names = config.get('class_names', [])
+    if not class_names:
+        raise ValueError("class_names must be defined in config")
 
-    # Build category mapping from train.json (source of truth)
-    category_mapping = build_category_from_json(data_dir, train_json)
-    class_names = [k for k, _ in sorted(category_mapping.items(), key=lambda x: x[1])]
+    # Build category mapping from config class_names; annotations not in this list are ignored
+    category_mapping = build_category_from_config(class_names)
 
     # Compute train/val split indices
     rs = np.random.RandomState(random_state)
