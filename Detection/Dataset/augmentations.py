@@ -75,6 +75,84 @@ def apply_track_shift(image, annotations, num_tracks, max_shift, height, width):
     return shifted, new_annos
 
 
+def _merge_top_bottom_component_pairs(annotations, height, width, top_bottom_threshold=0.1):
+    """
+    Merge pairs of annotations that represent the same component split across top
+    and bottom (human-labeled with imperfect width alignment). Uses max width when
+    combining.
+
+    Returns:
+        List of annotations with top/bottom pairs merged into single full-height boxes.
+    """
+    if len(annotations) < 2:
+        return annotations
+
+    thresh = max(int(height * top_bottom_threshold), 20)
+    used = [False] * len(annotations)
+    merged = []
+
+    for i, a1 in enumerate(annotations):
+        if used[i]:
+            continue
+        x1, y1, w1, h1 = a1["bbox"]
+        y1_end = y1 + h1
+
+        # a1 at top: starts near 0
+        at_top = y1 < thresh
+        # a1 at bottom: ends near height
+        at_bottom = y1_end > height - thresh
+        if not (at_top or at_bottom):
+            merged.append(copy.deepcopy(a1))
+            used[i] = True
+            continue
+
+        best_j = None
+        for j, a2 in enumerate(annotations):
+            if i == j or used[j]:
+                continue
+            if a1.get("category_id") != a2.get("category_id"):
+                continue
+            x2, y2, w2, h2 = a2["bbox"]
+            y2_end = y2 + h2
+
+            a2_at_top = y2 < thresh
+            a2_at_bottom = y2_end > height - thresh
+
+            # One at top, one at bottom
+            if not ((at_top and a2_at_bottom) or (at_bottom and a2_at_top)):
+                continue
+
+            # X overlap or close (human labels may not align perfectly)
+            left1, right1 = x1, x1 + w1
+            left2, right2 = x2, x2 + w2
+            if right1 < left2 - width * 0.1 or right2 < left1 - width * 0.1:
+                continue
+            best_j = j
+            break
+
+        if best_j is not None:
+            a2 = annotations[best_j]
+            x2, y2, w2, h2 = a2["bbox"]
+            x_min = min(x1, x2)
+            x_max = max(x1 + w1, x2 + w2)
+            w_merged = max(w1, w2, x_max - x_min)
+            comb = copy.deepcopy(a1)
+            comb["bbox"] = [
+                max(0.0, min(x_min, width - 1)),
+                0.0,
+                float(min(w_merged, width - max(0, x_min))),
+                float(height),
+            ]
+            merged.append(comb)
+            used[i] = True
+            used[best_j] = True
+        else:
+            merged.append(copy.deepcopy(a1))
+            used[i] = True
+
+    return merged
+
+
 def apply_circular_roll(image, annotations, num_tracks, height, width, split_wrapped=True):
     """
     Circular roll in the vertical dimension (tracks move up or down, wrapping).
@@ -82,6 +160,14 @@ def apply_circular_roll(image, annotations, num_tracks, height, width, split_wra
     Simulates the inspection tool rotating: e.g. track 0 moves to bottom, or
     last tracks move to top. When a bbox crosses the wrap boundary, it is
     split into two bboxes if split_wrapped=True.
+
+    Edge cases:
+    1. Full-height components: If a bbox spans the full image height, after roll
+       it remains full height — output exactly 1 bbox [x, 0, w, height].
+    2. Components at top/bottom: Human-labeled components that span top and bottom
+       may be split into two boxes with imperfect width alignment. These are
+       detected (same category, one at top / one at bottom, x overlap) and merged
+       into one full-height box using max width.
 
     Args:
         image: (H, W, C) uint8 numpy array.
@@ -100,6 +186,9 @@ def apply_circular_roll(image, annotations, num_tracks, height, width, split_wra
     if track_height <= 0:
         return image, annotations
 
+    # Pre-merge top/bottom pairs (same component, human-labeled with width variance)
+    annotations = _merge_top_bottom_component_pairs(annotations, height, width)
+
     # Roll by a random number of tracks (positive = top to bottom)
     k_tracks = random.randint(1, num_tracks - 1) if num_tracks > 1 else 0
     if random.random() < 0.5:
@@ -113,17 +202,29 @@ def apply_circular_roll(image, annotations, num_tracks, height, width, split_wra
         x, y, w, h = ann["bbox"]
         y1, y2 = y, y + h
 
+        # Edge case 1: Full-height component — remains one full-height bbox after roll
+        if h >= height:
+            new_ann = copy.deepcopy(ann)
+            new_ann["bbox"] = [x, 0.0, w, float(height)]
+            new_annos.append(new_ann)
+            continue
+
         # Source region [y1, y2) maps to [y1+k, y2+k) mod H
         y1_new = (y1 + k_pixels) % height
         y2_new = (y2 + k_pixels) % height
 
         if y1_new < y2_new:
-            # No wrap
+            # No wrap — single contiguous region
             new_ann = copy.deepcopy(ann)
             new_ann["bbox"] = [x, float(y1_new), w, float(y2_new - y1_new)]
             new_annos.append(new_ann)
+        elif y1_new == y2_new:
+            # Collapsed to zero (e.g. full-height edge case) — keep as 1 full-height
+            new_ann = copy.deepcopy(ann)
+            new_ann["bbox"] = [x, 0.0, w, float(height)]
+            new_annos.append(new_ann)
         else:
-            # Wraps: region splits into [y1_new, H) and [0, y2_new)
+            # Wraps: split into [y1_new, H) and [0, y2_new) — at most 2 boxes
             if split_wrapped:
                 # Top part (wrapped from bottom)
                 h1 = height - y1_new
@@ -132,9 +233,10 @@ def apply_circular_roll(image, annotations, num_tracks, height, width, split_wra
                     a1["bbox"] = [x, float(y1_new), w, float(h1)]
                     new_annos.append(a1)
                 # Bottom part (wrapped from top)
-                if y2_new >= 1:
+                h2 = y2_new
+                if h2 >= 1:
                     a2 = copy.deepcopy(ann)
-                    a2["bbox"] = [x, 0.0, w, float(y2_new)]
+                    a2["bbox"] = [x, 0.0, w, float(h2)]
                     new_annos.append(a2)
             else:
                 # Union bbox (loose)
