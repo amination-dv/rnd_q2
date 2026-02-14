@@ -64,6 +64,14 @@ def apply_track_shift(image, annotations, num_tracks, max_shift, height, width):
         # Shifted bbox: left edge moves by min_s, right by max_s (axis-aligned envelope)
         new_x = x + min_s
         new_x2 = x + w + max_s
+
+        # Skip annotations whose content wraps around the horizontal edge
+        # (np.roll wraps pixels but the bbox cannot represent a split region)
+        if new_x < 0 or new_x2 > width:
+            # Only skip if substantial wrap; minor sub-pixel clips are fine
+            if new_x < -1 or new_x2 > width + 1:
+                continue
+
         new_x = max(0, min(new_x, width - 1))
         new_x2 = max(new_x + 1, min(new_x2, width))
         new_w = new_x2 - new_x
