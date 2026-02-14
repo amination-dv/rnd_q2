@@ -20,8 +20,12 @@ split_wrapped_boxes: true
 
 # --- Model ---
 model_config: COCO-Detection/faster_rcnn_X_101_32x8d_FPN_3x.yaml
-num_classes: 6
-class_names: ["Fitting", "Valve", "stopple", "tap", "tee"]
+num_classes: 3
+class_names: ["Fitting", "Valve", "stopple"]
+# Merge similar annotation labels into a single class
+class_merge:
+  tap: "Fitting"       # tap annotations → Fitting
+  tee: "stopple"       # tee annotations → stopple
 freeze_at: 0
 
 # --- Training ---
@@ -33,7 +37,7 @@ repeat_threshold: 0.001
 repeat_sqrt: true
 lr: 0.00025
 lr_scheduler: WarmupMultiStepLR
-steps: []
+steps: [6000, 8000]
 roi_heads_batch_size: 512
 score_thresh_test: 0.6
 

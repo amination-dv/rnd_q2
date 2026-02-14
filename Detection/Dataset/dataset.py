@@ -33,16 +33,31 @@ from detectron2.structures import BoxMode
 from detectron2.data import MetadataCatalog, DatasetCatalog
 
 
-def build_category_from_config(class_names):
+def build_category_from_config(class_names, class_merge=None):
     """
-    Build category name → id mapping from config class_names.
+    Build category name → id mapping from config class_names + optional merges.
 
     Uses the ordered list from config as source of truth. Annotations whose
-    class is not in class_names are ignored during data loading.
+    class is not in the mapping (neither class_names nor class_merge keys)
+    are ignored during data loading.
+
+    Args:
+        class_names: Ordered list of final output class names.
+        class_merge: Optional dict mapping source label → target class name.
+            e.g. {"tap": "Fitting", "tee": "stopple"} merges tap into Fitting
+            and tee into stopple. Target names must exist in class_names.
     """
     if not class_names:
         raise ValueError("class_names must be a non-empty list")
-    return {name: i for i, name in enumerate(class_names)}
+    mapping = {name: i for i, name in enumerate(class_names)}
+    if class_merge:
+        for src, tgt in class_merge.items():
+            if tgt not in mapping:
+                raise ValueError(
+                    f"class_merge target '{tgt}' is not in class_names {class_names}"
+                )
+            mapping[src] = mapping[tgt]
+    return mapping
 
 
 def get_detection_data(data_dir, json_file, images_folder, split_indices, category_mapping):
@@ -128,8 +143,9 @@ def register_detection_datasets(config):
     class_names = config.get("class_names", [])
     if not class_names:
         raise ValueError("class_names must be defined in config")
+    class_merge = config.get("class_merge", {})
 
-    category_mapping = build_category_from_config(class_names)
+    category_mapping = build_category_from_config(class_names, class_merge)
 
     # Load full dataset (no split filter)
     full_data = get_detection_data(
