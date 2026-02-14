@@ -10,6 +10,10 @@ images_folder: images
 train_split: 0.7
 val_split: 0.15
 random_state: 111
+# Max fraction of dataset that can be empty images (no annotations after
+# class filtering).  Useful when excluded classes (e.g. Sleeve) leave many
+# images with zero labels.  null = keep all, 0.0 = remove all, 0.1 = ~10%.
+max_empty_ratio: 0.1
 
 # --- ILI augmentations (track-based, tubeview) ---
 num_tracks: 22

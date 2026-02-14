@@ -121,6 +121,48 @@ def get_detection_data(data_dir, json_file, images_folder, split_indices, catego
     return dataset
 
 
+def _kept_indices(full_data, max_empty_ratio, random_state):
+    """
+    Return the original-data indices to keep after subsampling empty images.
+
+    Indices refer to positions in *full_data* (and therefore the source JSON),
+    so they can be passed directly to ``get_detection_data(split_indices=…)``.
+
+    Args:
+        full_data: List of dataset dicts (Detectron2 format).
+        max_empty_ratio: Maximum fraction of the kept dataset that may be
+            empty (no annotations).  ``None`` keeps everything.  ``0.0``
+            removes all empty images.
+        random_state: Seed for reproducible subsampling.
+
+    Returns:
+        Sorted numpy array of kept indices.
+    """
+    if max_empty_ratio is None:
+        return np.arange(len(full_data))
+
+    annotated_idx = [i for i, d in enumerate(full_data) if d["annotations"]]
+    empty_idx = [i for i, d in enumerate(full_data) if not d["annotations"]]
+
+    if not empty_idx:
+        return np.arange(len(full_data))
+
+    n_ann = len(annotated_idx)
+    # Solve: n_keep / (n_ann + n_keep) <= max_empty_ratio
+    if max_empty_ratio <= 0:
+        n_keep = 0
+    else:
+        n_keep = int(max_empty_ratio * n_ann / (1 - max_empty_ratio))
+    n_keep = min(n_keep, len(empty_idx))
+
+    if n_keep < len(empty_idx):
+        rs = np.random.RandomState(random_state)
+        chosen = rs.choice(len(empty_idx), size=n_keep, replace=False)
+        empty_idx = [empty_idx[i] for i in sorted(chosen)]
+
+    return np.array(sorted(annotated_idx + empty_idx))
+
+
 def register_detection_datasets(config):
     """
     Register train, valid, and test datasets with Detectron2.
@@ -129,7 +171,8 @@ def register_detection_datasets(config):
     Ratios from config: train_split (e.g. 0.7), val_split (e.g. 0.15), remainder is test.
 
     Args:
-        config: data_dir, data_json, images_folder, train_split, val_split, random_state, class_names.
+        config: data_dir, data_json, images_folder, train_split, val_split,
+            random_state, class_names, max_empty_ratio.
 
     Returns:
         (n_total, n_train, n_val, n_test, num_classes, class_names).
@@ -144,6 +187,7 @@ def register_detection_datasets(config):
     if not class_names:
         raise ValueError("class_names must be defined in config")
     class_merge = config.get("class_merge", {})
+    max_empty_ratio = config.get("max_empty_ratio", None)
 
     category_mapping = build_category_from_config(class_names, class_merge)
 
@@ -153,23 +197,38 @@ def register_detection_datasets(config):
         split_indices=None,
         category_mapping=category_mapping,
     )
-    n_total = len(full_data)
 
+    # Filter empty images (those with no annotations after class filtering).
+    # kept_inds are original JSON indices — safe to pass to get_detection_data.
+    n_before = len(full_data)
+    kept_inds = _kept_indices(full_data, max_empty_ratio, random_state)
+    n_total = len(kept_inds)
+    n_empty = sum(1 for i in kept_inds if not full_data[i]["annotations"])
+    if n_before != n_total:
+        print(
+            f"Empty image filtering: {n_before} → {n_total} images "
+            f"({n_empty} empty, {n_empty / n_total * 100:.1f}%)"
+        )
+
+    # Use a sentinel label (-1) for empty images so they form their own
+    # stratum and don't collide with category_id 0.
     stratify_labels = []
-    for d in full_data:
-        annos = d.get("annotations", [])
+    for i in kept_inds:
+        annos = full_data[i].get("annotations", [])
         if not annos:
-            stratify_labels.append(0)
+            stratify_labels.append(-1)
         else:
             cids = [a["category_id"] for a in annos]
             stratify_labels.append(Counter(cids).most_common(1)[0][0])
 
-    inds = np.arange(n_total)
+    # Split positions (0..n_total-1) within kept_inds, then map back to
+    # original JSON indices for get_detection_data.
+    positions = np.arange(n_total)
     # First split: train+val (train_ratio + val_ratio) vs test
     train_val_ratio = train_ratio + val_ratio
     try:
-        train_val_inds, test_inds = train_test_split(
-            inds,
+        tv_pos, test_pos = train_test_split(
+            positions,
             train_size=train_val_ratio,
             stratify=stratify_labels,
             random_state=random_state,
@@ -178,23 +237,28 @@ def register_detection_datasets(config):
         rs = np.random.RandomState(random_state)
         perm = rs.permutation(n_total)
         n_tv = int(n_total * train_val_ratio)
-        train_val_inds, test_inds = perm[:n_tv], perm[n_tv:]
+        tv_pos, test_pos = perm[:n_tv], perm[n_tv:]
 
     # Second split: train vs val within train_val
     val_ratio_in_tv = val_ratio / train_val_ratio if train_val_ratio > 0 else 0.15
     try:
-        train_inds, valid_inds = train_test_split(
-            train_val_inds,
+        train_pos, valid_pos = train_test_split(
+            tv_pos,
             train_size=1 - val_ratio_in_tv,
-            stratify=[stratify_labels[i] for i in train_val_inds],
+            stratify=[stratify_labels[i] for i in tv_pos],
             random_state=random_state,
         )
     except ValueError:
         rs = np.random.RandomState(random_state)
-        perm = rs.permutation(len(train_val_inds))
-        n_train = int(len(train_val_inds) * (1 - val_ratio_in_tv))
-        train_inds = train_val_inds[perm[:n_train]]
-        valid_inds = train_val_inds[perm[n_train:]]
+        perm = rs.permutation(len(tv_pos))
+        n_train = int(len(tv_pos) * (1 - val_ratio_in_tv))
+        train_pos = tv_pos[perm[:n_train]]
+        valid_pos = tv_pos[perm[n_train:]]
+
+    # Map positions back to original JSON indices
+    train_inds = kept_inds[train_pos]
+    valid_inds = kept_inds[valid_pos]
+    test_inds = kept_inds[test_pos]
 
     n_train = len(train_inds)
     n_val = len(valid_inds)
