@@ -30,7 +30,7 @@ freeze_at: 0
 
 # --- Training ---
 max_iter: 10000
-batch_size: 16
+batch_size: 4
 num_workers: 4
 # Class-balanced sampling: oversample rare classes (RepeatFactorTrainingSampler)
 # threshold=0.5 ensures classes appearing in <50% of images get oversampled
