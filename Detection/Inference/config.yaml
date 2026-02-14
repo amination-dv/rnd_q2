@@ -1,0 +1,29 @@
+# =============================================================================
+# ILI Component Detection Configuration (Detectron2)
+# =============================================================================
+# Faster R-CNN with ResNeXt-101-FPN for ILI component detection.
+
+# --- Data ---
+data_dir: ../Data
+data_json: data.json
+images_folder: images
+
+# --- ILI augmentations (track-based, tubeview) ---
+num_tracks: 22
+max_track_shift: 25
+split_wrapped_boxes: true
+
+# --- Model ---
+model_config: COCO-Detection/faster_rcnn_X_101_32x8d_FPN_3x.yaml
+num_classes: 3
+class_names: ["Fitting", "Valve", "stopple"]
+class_merge:
+  tap: "Fitting"       # tap annotations → Fitting
+  tee: "stopple"       # tee annotations → stopple
+
+# --- Training ---
+roi_heads_batch_size: 512
+score_thresh_test: 0.6
+
+# --- Device ---
+device: [0]
