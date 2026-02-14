@@ -107,12 +107,12 @@ class DetectionTrainer(DefaultTrainer):
         hooks.append(CallbackHook(after_step=self._maybe_log_valid_images))
         return hooks
 
-    def _maybe_log_valid_images(self):
+    def _maybe_log_valid_images(self, trainer):
         """After eval steps, log validation prediction samples to WandB."""
-        next_iter = self.iter + 1
+        next_iter = trainer.iter + 1
         if self.eval_period <= 0 or next_iter % self.eval_period != 0:
             return
-        if next_iter == self.max_iter:
+        if next_iter == trainer.max_iter:
             return  # Last eval handled in after_train
         self._log_valid_sample()
 
