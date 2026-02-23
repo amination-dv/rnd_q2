@@ -8,7 +8,7 @@ from pathlib import Path
 
 import pandas as pd
 from ilipy import LogLevel, PipeDistance, PipeDistanceRange, Session
-from ilipyutils.tubeviews import MultiTrackTubeview, dataarray_to_image
+from ilipyutils.tubeviews import MultiTrackTubeview
 from tqdm.auto import tqdm
 
 
