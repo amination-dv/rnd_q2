@@ -7,13 +7,32 @@ import random
 import numpy as np
 import pandas as pd
 from typing import Dict
+import matplotlib
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 from ilipy import ClipTypes, OdometerTicks, OdometerTickRange, ViewDistance
 from ilipy.features import Bookmarks
 from ilipy.sensors import ArmAngleLookup
 from ilipyutils.ml_features.query import FeatureQuery
-from ilipyutils.ml_features.base import get_anomaly_types
+from ilipyutils.ml_features.base import get_anomaly_types, AnomalyStatus
+from ilipy.channeldata import  ImageProfile
+
+# Default circumferential track count for create_arm_array / generate_images when num_tracks=None.
+# Override process-wide with set_num_tracks() (e.g. from train_v4 --num-tracks).
+_default_num_tracks: int = 20
+
+
+def set_num_tracks(n: int) -> None:
+    """Set default num_tracks for helpers that use None → global default."""
+    global _default_num_tracks
+    if int(n) < 1:
+        raise ValueError("num_tracks must be >= 1")
+    _default_num_tracks = int(n)
+
+
+def get_num_tracks() -> int:
+    return _default_num_tracks
 
 
 def set_ili_run(run_number, env="research"):
@@ -66,6 +85,15 @@ def set_ili_run(run_number, env="research"):
             "start_distance": 10,
             "end_distance": 13983,
         },
+        6: {
+            "surf_s3_bucket": "dv-ilit0006",
+            "surf_s3_base_prefix": "track_runs/09WMV85VAMM/ili_ml_surface/v1.2",
+            "inspection_id": "09WMV85VAMM",
+            "env": env,
+            "clip_id": "",
+            "start_distance": -1,
+            "end_distance": 1145,
+        }
     }
 
     if run_number not in run_configs:
@@ -124,7 +152,7 @@ def extract_arm_angles(
                 clip, ViewDistance(end_vd)
             )
         except Exception:
-            continue  # clip can’t map those distances
+            continue  # clip can't map those distances
 
         query_range = OdometerTickRange(tick_start, tick_end)
         clip_range = clip.odometer_tick_range
@@ -164,7 +192,6 @@ def extract_arm_angles(
 
     return all_arms
 
-
 # pick which bookmark_type you want to sample:
 #   0 = girth welds  (will only keep anchored ones)
 #   1 = bends
@@ -172,7 +199,7 @@ def extract_arm_angles(
 def extract_bookmarks(
     session, inspection_id, dist_corr, bookmark_type=0, anchored_only=True
 ):
-    bookmarks = Bookmarks(session.database_connector)
+    bookmarks = Bookmarks(session=session)
     components = bookmarks.get_components(inspection_id)
 
     locations = []
@@ -248,16 +275,18 @@ def generate_new_locations(
 
 def create_arm_array(
     arm_data_dict: Dict[str, pd.DataFrame],
-    num_tracks: int = 20,
+    num_tracks: int | None = None,
     num_tick_samples: int = 500,
-    normalize: bool = False,
+    normalize: str = "patch",
 ) -> np.ndarray:
+    if num_tracks is None:
+        num_tracks = get_num_tracks()
     all_dfs = pd.concat(arm_data_dict.values(), ignore_index=True)
     grouped = all_dfs.groupby("track_index")["arm_axis_angles_rad"]
     groups = {track_idx: group.values for track_idx, group in grouped}
 
     arm_array = np.zeros((num_tracks, num_tick_samples), dtype=np.float32)
-
+    filled_rows = []
     for i in range(num_tracks):
         if i in groups:
             values = groups[i]
@@ -265,28 +294,40 @@ def create_arm_array(
             arm_array[i, :length] = values[:length]
             if length < num_tick_samples and length > 0:
                 arm_array[i, length:] = values[length - 1]
+            filled_rows.append(i)
+    rows = np.array(filled_rows, dtype=int)
+    if normalize == "std":
+        
+        arm_array[rows] -= arm_array[rows].mean(axis=1, keepdims=True)
+        stds = arm_array[rows].std(axis=1)
+        ref_row = rows[np.argmax(stds)]
+        ref_min = arm_array[ref_row].min()
+        ref_max = arm_array[ref_row].max()
+        denom = (ref_max - ref_min) if ref_max != ref_min else 1.0
+        arm_array[rows] = (arm_array[rows] - ref_min) / denom
+        
+    elif normalize == "patch":
 
-    if normalize:
-        row_min = arm_array.min(axis=1, keepdims=True)
-        row_max = arm_array.max(axis=1, keepdims=True)
+        row_min = arm_array[rows].min(axis=1, keepdims=True)
+        row_max = arm_array[rows].max(axis=1, keepdims=True)
         denom = np.where((row_max - row_min) == 0, 1, row_max - row_min)
-        arm_array = (arm_array - row_min) / denom
+        arm_array[rows] = (arm_array[rows] - row_min) / denom
+    
+    
 
-        arr_mean = arm_array.mean(axis=1, keepdims=True)
-        arr_std = arm_array.std(axis=1, keepdims=True)
-        return (arm_array - arr_mean) / np.where(arr_std == 0, 1, arr_std)
-
-    return arm_array        
+    return arm_array
+        
 
 
 def generate_images(
     session,
     bookmark_locations,
     dist_corr,
+    stats,
     length: float = 0.5,
-    num_tracks: int = 20,
+    num_tracks: int | None = None,
     tick_sampling_interval=10,
-    normalize: bool = False,
+    normalize: str = "patch",
     output_dir: str = "arm_angles",
 ):
     """
@@ -300,6 +341,7 @@ def generate_images(
         num_tracks (int): Number of tracks per matrix.
         fixed_length (int): Fixed length of each arm angle row.
         output_dir (str): Directory where .npy files will be saved.
+        normalize (str): Normalization method to apply ("patch", "range", or None).
 
     Returns:
         List[str]: File paths of saved matrices.
@@ -312,10 +354,12 @@ def generate_images(
     if not bookmark_locations:
         raise ValueError("No valid bookmarks found.")
 
+    if num_tracks is None:
+        num_tracks = get_num_tracks()
+
     saved_files = []
 
-    for view_dist in tqdm(bookmark_locations):
-        # for view_dist in bookmark_locations:
+    for view_dist, ind in tqdm(zip(bookmark_locations, stats)):
         try:
             arm_data = extract_arm_angles(
                 session=session,
@@ -340,19 +384,23 @@ def generate_images(
 
             # Save with view distance in filename (rounded to 2 decimals)
             view_dist_mm = round(view_dist * 1000, 2)
-            filename = f"d{view_dist_mm:010.0f}.npy"
+            filename = f"d{view_dist_mm:010.0f}_{ind}.npy"
+            #filepath = os.path.join(output_dir, status, filename)
+            #qc_output_dir = os.path.join(output_dir, status,"qc")
             filepath = os.path.join(output_dir, filename)
+            qc_output_dir = os.path.join(output_dir,"qc")
+            os.makedirs(qc_output_dir, exist_ok=True)
             np.save(filepath, matrix)
             saved_files.append(filepath)
-            qc_output_dir = os.path.join(output_dir, "qc")
-            os.makedirs(qc_output_dir, exist_ok=True)
+
             plt.imshow(
                 matrix.T, cmap="inferno", origin="lower", aspect="auto",
-                interpolation="nearest",
+                interpolation="nearest",vmin=0, vmax=1
             )
+            plt.colorbar()
             plt.axis("off")
             plt.savefig(
-                os.path.join(qc_output_dir, f"{view_dist_mm:010.0f}.png"),
+                os.path.join(qc_output_dir, f"{view_dist_mm:010.0f}_{ind}.png"),
                 bbox_inches="tight",
                 pad_inches=0,
             )
@@ -365,7 +413,7 @@ def generate_images(
     print(f"Saved {len(saved_files)} arm angle matrices to '{output_dir}'")
     return saved_files
 
-def extract_dent_anomalies(session, inspection_id, dist_corr):
+def extract_dent_anomalies(session, inspection_id, dist_corr, status="Approved"):
     """
     Extract dent anomalies from the inspection session.
 
@@ -381,56 +429,159 @@ def extract_dent_anomalies(session, inspection_id, dist_corr):
     feature_query = FeatureQuery(session=session, bookmarks_interface=bookmarks)
     session.set_active_inspection(inspection_id)
     locations = []
-    tracks_ind ={}
+    track_inds = []
+    def add_location(loc_list, val, tol):
+        for existing in loc_list:
+            if abs(existing - val) < tol:
+                return False
+        loc_list.append(val)
+        return True
 
     # Get Dent Anomaly Type
-    dent_anomaly_type = [a for a in get_anomaly_types() if a.name in ["Dent Complex", "Dent Plain"]]
+    dent_anomaly_type = [a for a in get_anomaly_types() if "Dent" in a.name]
+    clips = session.get_clips_by_type(ClipTypes.ChannelData)
     for dent_type in dent_anomaly_type:
         # Query clips with dent anomalies for the specified inspection
-        clip_dent_dict = feature_query.get_clips_by_anomaly_type(
-            dent_type,
-            inspection_id_list=[inspection_id],
-        )
+        clip_dent_dict = {}
+        for clip in clips:
+            if clip.odometer_tick_range.max.value - clip.odometer_tick_range.min.value < 1000:
+                continue
+            clip_dent_list_all=feature_query.get_anomalies_by_clip_by_anomaly_type(
+                    clip_id=clip.clip_id,
+                    inspection_id=inspection_id,
+                    anomaly_type=dent_type,
+                )
+            clip_dent_list = [dent for dent in clip_dent_list_all if dent.status.value == status]
+            if len(clip_dent_list) > 0:
+                if clip.clip_id not in clip_dent_dict:
+                    clip_dent_dict[clip.clip_id] = clip_dent_list
+                else:
+                    clip_dent_dict[clip.clip_id].extend(clip_dent_list)
+
 
         # Iterate through clips and dents
-        for clip, dent_list in clip_dent_dict.items():
+        for clip_id, dent_list in clip_dent_dict.items():
             for dent in dent_list:
-                    if dent.status.value == "KNOWN":
+                    #if dent.status.value == "Size Anomaly":
                         for track_loc in dent.feature_location.location_matrix:
                             for clip_loc in track_loc:
-                                if clip_loc.clip.clip_id == clip.clip_id:
-                                    
+                                if clip_loc.clip.clip_id == clip_id:
                                     dent_odo_start, dent_odo_end = clip_loc.odometer_ticks_range
                                     dent_odo = (dent_odo_start+dent_odo_end)/2
                                     view_distance = dist_corr.get_view_distance_from_odometer_ticks(clip_loc.clip, OdometerTicks(int(dent_odo)))
-                                    locations.append(view_distance.value)
-                                    view_dist_mm = round(view_distance.value * 1000, 2)
-                                    vd_key = f"d{view_dist_mm:010.0f}"
-                                    tracks_ind[vd_key] = clip.track_index
+                                    vd_val = view_distance.value
+                                    min_sep=0.2
+                                    add_location(locations, vd_val, min_sep)
+                                    track_inds.append(clip_id.split("-")[1])
 
-    return locations, tracks_ind
+    return locations, track_inds
 
-# if __name__ == "__main__":
-#     # Example usage
-#     run_number = 4  # Change this to the desired run number
-#     _, _, inspection_id, env, _, start, end = set_ili_run(run_number)
+def extract_dent_anomalies_optimized(session, inspection_id, dist_corr, statuses=["Approved"]):
+    """
+    Extract dent anomalies from the inspection session.
 
-#     session = Session(environment=env)
-#     session.set_active_inspection(inspection_id)
-#     dist_corr = DistanceCorrelation(session)
-#     bookmark_locations = extract_bookmarks(
-#         session=session,
-#         inspection_id=inspection_id,
-#         dist_corr=dist_corr,
-#         bookmark_type=0,  # Anchored girth welds
-#     )
+    Args:
+        session (Session): The ILIPY session object.
+        inspection_id (str): The ID of the inspection session.
+        dist_corr (DistanceCorrelation): The distance correlation object.
+        statuses (list[str | int]): Status names or IDs to filter by
+            (e.g. ["Approved", "Not Sized - Approved"]).
 
-#     generate_images(
-#         session=session,
-#         bookmark_locations=bookmark_locations,
-#         dist_corr=dist_corr,
-#         length=0.5,
-#         num_tracks=20,
-#         fixed_length=500,
-#         output_dir="tees",
-#     )
+    Returns:
+        tuple: (locations, track_inds, scan_angle_range, radial_position_mm_range,
+                frame_indices_range, odometer_ticks_range)
+    """
+    from ilipy.features import AnomalyQuery
+
+    bookmarks = Bookmarks(session)
+    session.set_active_inspection(inspection_id)
+
+    # Resolve status names to IDs
+    all_status_types = bookmarks.get_anomaly_status_types()
+    name_to_id = {st.name: st.anomaly_status_type_id for st in all_status_types}
+    status_ids = []
+    for s in statuses:
+        if isinstance(s, int):
+            status_ids.append(s)
+        elif s in name_to_id:
+            status_ids.append(name_to_id[s])
+        else:
+            raise ValueError(
+                f"Unknown status '{s}'. Available: {list(name_to_id.keys())}"
+            )
+
+    # Fetch filtered anomalies via AnomalyQuery (much faster than get_anomalies)
+    query = AnomalyQuery()
+    query.statuses = status_ids
+    query.tag_names = ["Dent-Detection-v3"]
+
+    all_anomalies = []
+    page_offset, page_size = 0, 300
+    while True:
+        page = bookmarks.filter_anomalies(inspection_id, query, page_offset, page_size)
+        if not page:
+            break
+        all_anomalies.extend(page)
+        if len(page) < page_size:
+            break
+        page_offset += page_size
+    print(f"Fetched {len(all_anomalies)} anomalies matching status + tag filter")
+    all_anomalies = [a for a in all_anomalies if "Dent-Detection-v3" in a.tags]
+    target_type_names = {a.name for a in get_anomaly_types() if "Nominal" in a.name}
+    anomaly_types_by_id = {a.anomaly_type_id: a.name for a in bookmarks.get_anomaly_types()}
+    # Map identification_type_id -> anomaly type name (via anomaly_type_id)
+    # ident_types = bookmarks.get_anomaly_identification_types()
+    # ident_id_to_type_name = {
+    #     it.anomaly_identification_type_id: anomaly_types_by_id.get(it.anomaly_type_id, "")
+    #     for it in ident_types
+    # }
+
+    # Build set of valid clip IDs (clips with enough data)
+    clips = session.get_clips_by_type(ClipTypes.ChannelData)
+    valid_clip_ids = {
+        clip.clip_id
+        for clip in clips
+        if clip.odometer_tick_range.max.value - clip.odometer_tick_range.min.value >= 1000
+    }
+
+    locations = []
+    track_inds = []
+    scan_angle_range = []
+    radial_position_mm_range = []
+    frame_indices_range = []
+    odometer_ticks_range = []
+
+    # Wrap each anomaly once
+    from ilipyutils.ml_features.base import ilipy_info_to_wrap_info
+
+    for anomaly in tqdm(all_anomalies, desc="Processing anomalies"):
+
+        if anomaly.feature.anomaly_identification.name not in target_type_names:
+            continue
+
+        try:
+            wrapped = ilipy_info_to_wrap_info(anomaly, session=session, bookmarks_interface=bookmarks)
+        except Exception:
+            continue
+
+        if wrapped.feature_location is None:
+            continue
+
+        for track_loc in wrapped.feature_location.location_matrix:
+            for clip_loc in track_loc:
+                cid = clip_loc.clip.clip_id
+                if cid not in valid_clip_ids:
+                    continue
+                dent_odo_start, dent_odo_end = clip_loc.odometer_ticks_range
+                dent_odo = (dent_odo_start + dent_odo_end) / 2
+                view_distance = dist_corr.get_view_distance_from_odometer_ticks(
+                    clip_loc.clip, OdometerTicks(int(dent_odo))
+                )
+                locations.append(view_distance.value)
+                track_inds.append(cid.split("-")[1])
+                scan_angle_range.append(clip_loc.scan_angle_range)
+                radial_position_mm_range.append(clip_loc.radial_position_mm_range)
+                frame_indices_range.append(clip_loc.frame_indices_range_dict[ImageProfile.ZeroAngle])
+                odometer_ticks_range.append(clip_loc.odometer_ticks_range)
+
+    return locations, track_inds, scan_angle_range, radial_position_mm_range, frame_indices_range, odometer_ticks_range
