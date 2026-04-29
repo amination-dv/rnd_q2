@@ -5,9 +5,14 @@ from torchvision.models import ResNet18_Weights
 
 class ResNet18Classifier(nn.Module):
     def __init__(
-        self, dense_units=128, dropout_rate=0.5, weights=ResNet18_Weights.DEFAULT
+        self,
+        dense_units=128,
+        dropout_rate=0.5,
+        weights=ResNet18_Weights.DEFAULT,
+        num_classes: int = 20,
     ):
         super(ResNet18Classifier, self).__init__()
+        self.num_classes = num_classes
 
         # Load pretrained ResNet18
         self.base_model = models.resnet18(weights=weights)
@@ -25,7 +30,7 @@ class ResNet18Classifier(nn.Module):
             nn.Linear(in_features, dense_units),
             nn.ReLU(),
             nn.Dropout(dropout_rate),
-            nn.Linear(dense_units, 21),
+            nn.Linear(dense_units, num_classes),
         )
 
         # Replace original fc layer with our custom classifier
