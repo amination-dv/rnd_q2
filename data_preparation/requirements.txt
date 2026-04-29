@@ -1,0 +1,22 @@
+# Semi-Automatic QC Pipeline Dependencies
+
+# Core ML
+torch>=2.0.0
+torchvision>=0.15.0
+numpy>=1.24.0
+
+# Data processing
+pandas>=2.0.0
+opencv-python>=4.8.0
+statsmodels>=0.14.0
+
+# Web UI
+streamlit>=1.28.0
+plotly>=5.18.0
+matplotlib>=3.7.0
+
+# AWS (for model download)
+boto3>=1.28.0
+
+# Utilities
+Pillow>=10.0.0

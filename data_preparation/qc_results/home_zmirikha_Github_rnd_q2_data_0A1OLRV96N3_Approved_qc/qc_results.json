@@ -1,0 +1,817 @@
+{
+  "0014950856": {
+    "sample_id": "0014950856",
+    "raw_labels": [
+      "015"
+    ],
+    "png_std_path": "/home/zmirikha/Github/rnd_q2/data/0A1OLRV96N3/Approved_qc/std_normalized/qc/0014950856_015_16.png",
+    "png_patch_path": "/home/zmirikha/Github/rnd_q2/data/0A1OLRV96N3/Approved_qc/patch_normalized/qc/0014950856_015_16.png",
+    "npy_std_path": "/home/zmirikha/Github/rnd_q2/data/0A1OLRV96N3/Approved_qc/std_normalized/d0014950856_015.npy",
+    "npy_patch_path": "/home/zmirikha/Github/rnd_q2/data/0A1OLRV96N3/Approved_qc/patch_normalized/d0014950856_015.npy",
+    "model_predictions": [
+      1.3391125541772908e-08,
+      3.027468054028759e-08,
+      1.7024712750668414e-09,
+      2.48728781571117e-07,
+      1.6152941952896072e-06,
+      7.836212034817436e-08,
+      9.028863132698461e-07,
+      4.0070284512694343e-07,
+      1.4962093786152764e-08,
+      1.9586353516842792e-07,
+      3.144011998301721e-06,
+      1.3845567359282995e-08,
+      2.584193055099604e-07,
+      1.4974759210417687e-07,
+      1.2166251508460846e-06,
+      0.9990857839584351,
+      0.9996002316474915,
+      8.405138942180201e-06,
+      2.3250319713952194e-07,
+      8.821285035764959e-08,
+      4.5716593177758114e-08,
+      2.617933432702557e-06
+    ],
+    "final_labels": [
+      "015",
+      "016"
+    ],
+    "status": "edited",
+    "reviewer_notes": "",
+    "timestamp": "2026-03-16T12:35:16.077064"
+  },
+  "0025669455": {
+    "sample_id": "0025669455",
+    "raw_labels": [
+      "012"
+    ],
+    "png_std_path": "/home/zmirikha/Github/rnd_q2/data/0A1OLRV96N3/Approved_qc/std_normalized/qc/0025669455_012_11.png",
+    "png_patch_path": "/home/zmirikha/Github/rnd_q2/data/0A1OLRV96N3/Approved_qc/patch_normalized/qc/0025669455_012_11.png",
+    "npy_std_path": "/home/zmirikha/Github/rnd_q2/data/0A1OLRV96N3/Approved_qc/std_normalized/d0025669455_012.npy",
+    "npy_patch_path": "/home/zmirikha/Github/rnd_q2/data/0A1OLRV96N3/Approved_qc/patch_normalized/d0025669455_012.npy",
+    "model_predictions": [
+      1.0028457175792482e-08,
+      1.0052227279733206e-11,
+      2.7530683510690324e-08,
+      2.007004873405549e-08,
+      5.482369225262573e-09,
+      3.371766155169098e-08,
+      3.7666656460544345e-09,
+      1.56530577388736e-09,
+      1.7707640154185356e-06,
+      3.050779351365662e-10,
+      1.6744917274991167e-06,
+      0.9996577501296997,
+      9.652130393078551e-05,
+      6.388539003365779e-11,
+      2.002439487114316e-06,
+      4.661582786447127e-10,
+      1.329477328226858e-08,
+      1.0695606533772661e-06,
+      6.461733925711144e-12,
+      2.3269233651035393e-08,
+      6.73123423666766e-09,
+      3.6436433731301676e-11
+    ],
+    "final_labels": [
+      "011",
+      "012"
+    ],
+    "status": "edited",
+    "reviewer_notes": "",
+    "timestamp": "2026-03-16T12:36:02.148661"
+  },
+  "0001222006": {
+    "sample_id": "0001222006",
+    "raw_labels": [
+      "008"
+    ],
+    "png_std_path": "/home/zmirikha/Github/rnd_q2/data/0A1OLRV96N3/Approved_qc/std_normalized/qc/0001222006_008_9_10.png",
+    "png_patch_path": "/home/zmirikha/Github/rnd_q2/data/0A1OLRV96N3/Approved_qc/patch_normalized/qc/0001222006_008_9_10.png",
+    "npy_std_path": "/home/zmirikha/Github/rnd_q2/data/0A1OLRV96N3/Approved_qc/std_normalized/d0001222006_008.npy",
+    "npy_patch_path": "/home/zmirikha/Github/rnd_q2/data/0A1OLRV96N3/Approved_qc/patch_normalized/d0001222006_008.npy",
+    "model_predictions": [
+      3.860027959490253e-07,
+      3.15940051898167e-09,
+      4.534391564448015e-07,
+      2.4762491079854954e-07,
+      6.597493751314687e-08,
+      1.418374631612096e-05,
+      3.651984741281922e-07,
+      8.988122135633603e-05,
+      0.9996083378791809,
+      0.9985610842704773,
+      0.011244173161685467,
+      0.0002695955627132207,
+      8.170188152689661e-07,
+      1.7241053740235657e-07,
+      1.6537591136511764e-06,
+      9.96094513538992e-07,
+      7.263709989047129e-08,
+      3.703442052938044e-05,
+      3.2287167073263845e-07,
+      1.595481649019348e-06,
+      4.919932621305634e-07,
+      6.357419124469743e-08
+    ],
+    "final_labels": [
+      "008",
+      "009"
+    ],
+    "status": "edited",
+    "reviewer_notes": "",
+    "timestamp": "2026-03-16T12:34:33.596746"
+  },
+  "0008250817": {
+    "sample_id": "0008250817",
+    "raw_labels": [
+      "012"
+    ],
+    "png_std_path": "/home/zmirikha/Github/rnd_q2/data/0A1OLRV96N3/Approved_qc/std_normalized/qc/0008250817_012_11_13.png",
+    "png_patch_path": "/home/zmirikha/Github/rnd_q2/data/0A1OLRV96N3/Approved_qc/patch_normalized/qc/0008250817_012_11_13.png",
+    "npy_std_path": "/home/zmirikha/Github/rnd_q2/data/0A1OLRV96N3/Approved_qc/std_normalized/d0008250817_012.npy",
+    "npy_patch_path": "/home/zmirikha/Github/rnd_q2/data/0A1OLRV96N3/Approved_qc/patch_normalized/d0008250817_012.npy",
+    "model_predictions": [
+      8.139933171946723e-09,
+      2.889955635909658e-11,
+      1.4995396213635104e-07,
+      3.5082365457128617e-07,
+      9.489809826845885e-09,
+      6.541708330587426e-08,
+      1.1477416350658132e-08,
+      4.4074571770025273e-10,
+      3.2052421374828555e-06,
+      5.239248479504965e-10,
+      1.138059360528132e-06,
+      0.9994282126426697,
+      0.02799496427178383,
+      1.7390263451488863e-08,
+      3.916615605703555e-05,
+      8.528200368118632e-09,
+      1.1989362747044652e-07,
+      5.065096047474071e-06,
+      3.3840491520109595e-10,
+      4.486312210616461e-09,
+      1.2205049415570102e-07,
+      3.379123203473e-09
+    ],
+    "final_labels": [
+      "011"
+    ],
+    "status": "edited",
+    "reviewer_notes": "",
+    "timestamp": "2026-03-16T12:34:56.158245"
+  },
+  "0001237535": {
+    "sample_id": "0001237535",
+    "raw_labels": [
+      "003"
+    ],
+    "png_std_path": "/home/zmirikha/Github/rnd_q2/data/0A1OLRV96N3/Approved_qc/std_normalized/qc/0001237535_003_4.png",
+    "png_patch_path": "/home/zmirikha/Github/rnd_q2/data/0A1OLRV96N3/Approved_qc/patch_normalized/qc/0001237535_003_4.png",
+    "npy_std_path": "/home/zmirikha/Github/rnd_q2/data/0A1OLRV96N3/Approved_qc/std_normalized/d0001237535_003.npy",
+    "npy_patch_path": "/home/zmirikha/Github/rnd_q2/data/0A1OLRV96N3/Approved_qc/patch_normalized/d0001237535_003.npy",
+    "model_predictions": [
+      1.4471922895609168e-06,
+      7.794354672796544e-08,
+      0.00011374289897503331,
+      0.9994939565658569,
+      0.9825049042701721,
+      7.399873993563233e-06,
+      3.9987316995393485e-05,
+      1.0953476703434717e-06,
+      1.1488464224385098e-06,
+      0.00018745874695014209,
+      3.1870621342022787e-07,
+      1.2185428488464822e-07,
+      1.1236534191993997e-05,
+      4.5670839199374313e-07,
+      3.2868301786947995e-06,
+      1.0492934052308556e-05,
+      1.17574393243558e-06,
+      1.623818235430008e-07,
+      2.928884896391537e-05,
+      1.8270753798788064e-07,
+      1.2495477221818874e-06,
+      3.591675294956076e-07
+    ],
+    "final_labels": [
+      "003",
+      "004"
+    ],
+    "status": "edited",
+    "reviewer_notes": "",
+    "timestamp": "2026-03-16T12:34:42.839931"
+  },
+  "0017190381": {
+    "sample_id": "0017190381",
+    "raw_labels": [
+      "010"
+    ],
+    "png_std_path": "/home/zmirikha/Github/rnd_q2/data/0A1OLRV96N3/Approved_qc/std_normalized/qc/0017190381_010.png",
+    "png_patch_path": "/home/zmirikha/Github/rnd_q2/data/0A1OLRV96N3/Approved_qc/patch_normalized/qc/0017190381_010_11.png",
+    "npy_std_path": "/home/zmirikha/Github/rnd_q2/data/0A1OLRV96N3/Approved_qc/std_normalized/d0017190381_010.npy",
+    "npy_patch_path": "/home/zmirikha/Github/rnd_q2/data/0A1OLRV96N3/Approved_qc/patch_normalized/d0017190381_010.npy",
+    "model_predictions": [
+      3.1590716154106246e-11,
+      3.967207451438526e-09,
+      7.471961112059944e-07,
+      2.0361101693566752e-10,
+      2.2895912934473017e-06,
+      9.532190858863032e-08,
+      7.648953692651617e-11,
+      3.1553934149997076e-06,
+      1.3947475281383959e-06,
+      7.342607233340459e-08,
+      0.9999340772628784,
+      0.9990719556808472,
+      8.193877079065714e-07,
+      4.0834615333551483e-07,
+      1.320151682193682e-06,
+      2.874566140675938e-09,
+      5.068430937171797e-07,
+      1.1090822482628937e-07,
+      1.3181516989035913e-10,
+      9.71672034211224e-06,
+      1.604956878509256e-07,
+      2.232281381964185e-08
+    ],
+    "final_labels": [
+      "010",
+      "011"
+    ],
+    "status": "edited",
+    "reviewer_notes": "",
+    "timestamp": "2026-03-16T12:35:24.878988"
+  },
+  "0003628219": {
+    "sample_id": "0003628219",
+    "raw_labels": [
+      "003"
+    ],
+    "png_std_path": "/home/zmirikha/Github/rnd_q2/data/0A1OLRV96N3/Approved_qc/std_normalized/qc/0003628219_003_4.png",
+    "png_patch_path": "/home/zmirikha/Github/rnd_q2/data/0A1OLRV96N3/Approved_qc/patch_normalized/qc/0003628219_003_4.png",
+    "npy_std_path": "/home/zmirikha/Github/rnd_q2/data/0A1OLRV96N3/Approved_qc/std_normalized/d0003628219_003.npy",
+    "npy_patch_path": "/home/zmirikha/Github/rnd_q2/data/0A1OLRV96N3/Approved_qc/patch_normalized/d0003628219_003.npy",
+    "model_predictions": [
+      2.9205983409497094e-08,
+      1.529523951937506e-09,
+      5.051728294347413e-06,
+      0.9999330043792725,
+      0.999855637550354,
+      1.0471011592017021e-05,
+      1.3503949958248995e-07,
+      2.2016089928911242e-07,
+      2.8647919592117432e-08,
+      6.584085667782347e-07,
+      2.5000508330208504e-08,
+      2.8338458246679465e-09,
+      9.747655838054925e-08,
+      1.653413050917152e-08,
+      2.6744437775505503e-08,
+      7.332237572654776e-08,
+      1.6810071201689425e-07,
+      1.2080374034439956e-08,
+      4.891595040135144e-07,
+      1.707320507193799e-08,
+      1.161719751507917e-07,
+      1.535777549577233e-08
+    ],
+    "final_labels": [
+      "003",
+      "004"
+    ],
+    "status": "edited",
+    "reviewer_notes": "",
+    "timestamp": "2026-03-16T12:34:45.340591"
+  },
+  "0036277014": {
+    "sample_id": "0036277014",
+    "raw_labels": [
+      "004"
+    ],
+    "png_std_path": "/home/zmirikha/Github/rnd_q2/data/0A1OLRV96N3/Approved_qc/std_normalized/qc/0036277014_004_5_6.png",
+    "png_patch_path": "/home/zmirikha/Github/rnd_q2/data/0A1OLRV96N3/Approved_qc/patch_normalized/qc/0036277014_004_5_6.png",
+    "npy_std_path": "/home/zmirikha/Github/rnd_q2/data/0A1OLRV96N3/Approved_qc/std_normalized/d0036277014_004.npy",
+    "npy_patch_path": "/home/zmirikha/Github/rnd_q2/data/0A1OLRV96N3/Approved_qc/patch_normalized/d0036277014_004.npy",
+    "model_predictions": [
+      1.0499069391656235e-09,
+      5.399797622929192e-11,
+      1.5857619217740648e-08,
+      2.5309633500114614e-08,
+      0.0105537548661232,
+      1.1815285688498989e-05,
+      2.5057061066036113e-05,
+      2.6896634608419845e-06,
+      5.554256166107052e-09,
+      2.4244340579571144e-07,
+      8.403619062846701e-07,
+      5.945232639525955e-10,
+      1.6595329555002536e-08,
+      2.2367734331396605e-08,
+      2.8669182583485053e-08,
+      1.5312760837105088e-08,
+      2.911902940994082e-09,
+      2.274041371874702e-10,
+      1.4304970541445527e-09,
+      9.711033088777299e-10,
+      1.943850236330036e-08,
+      3.287945915531054e-09
+    ],
+    "final_labels": [
+      "004"
+    ],
+    "status": "edited",
+    "reviewer_notes": "",
+    "timestamp": "2026-03-16T12:37:09.793351"
+  },
+  "0012773966": {
+    "sample_id": "0012773966",
+    "raw_labels": [
+      "011"
+    ],
+    "png_std_path": "/home/zmirikha/Github/rnd_q2/data/0A1OLRV96N3/Approved_qc/std_normalized/qc/0012773966_011.png",
+    "png_patch_path": "/home/zmirikha/Github/rnd_q2/data/0A1OLRV96N3/Approved_qc/patch_normalized/qc/0012773966_011.png",
+    "npy_std_path": "/home/zmirikha/Github/rnd_q2/data/0A1OLRV96N3/Approved_qc/std_normalized/d0012773966_011.npy",
+    "npy_patch_path": "/home/zmirikha/Github/rnd_q2/data/0A1OLRV96N3/Approved_qc/patch_normalized/d0012773966_011.npy",
+    "model_predictions": [
+      7.245417776857721e-08,
+      2.1999763122337868e-11,
+      1.3226943451627449e-07,
+      4.6113049734231026e-07,
+      9.177436033347419e-10,
+      1.523166481831595e-08,
+      1.1067240279771795e-07,
+      1.711208258425856e-10,
+      1.7762066590876202e-06,
+      4.240441953129448e-08,
+      8.323626730089018e-07,
+      0.9998537302017212,
+      0.8516582250595093,
+      1.1054930304510435e-09,
+      2.1429668777273037e-06,
+      1.0340243328244014e-08,
+      9.522859167887532e-10,
+      1.1019399153155973e-06,
+      2.572323465344084e-10,
+      3.417253813253751e-09,
+      2.963418488377556e-08,
+      3.8350010667098644e-11
+    ],
+    "final_labels": [
+      "011"
+    ],
+    "status": "edited",
+    "reviewer_notes": "",
+    "timestamp": "2026-03-16T12:35:07.517075"
+  },
+  "0033770217": {
+    "sample_id": "0033770217",
+    "raw_labels": [
+      "010"
+    ],
+    "png_std_path": "/home/zmirikha/Github/rnd_q2/data/0A1OLRV96N3/Approved_qc/std_normalized/qc/0033770217_010_9.png",
+    "png_patch_path": "/home/zmirikha/Github/rnd_q2/data/0A1OLRV96N3/Approved_qc/patch_normalized/qc/0033770217_010_9.png",
+    "npy_std_path": "/home/zmirikha/Github/rnd_q2/data/0A1OLRV96N3/Approved_qc/std_normalized/d0033770217_010.npy",
+    "npy_patch_path": "/home/zmirikha/Github/rnd_q2/data/0A1OLRV96N3/Approved_qc/patch_normalized/d0033770217_010.npy",
+    "model_predictions": [
+      6.02657868054024e-10,
+      1.4025195582689776e-07,
+      4.926783248038191e-08,
+      1.5531444186311916e-10,
+      2.119756800311734e-06,
+      1.624204798433837e-10,
+      8.582017585467838e-07,
+      4.277723292034352e-06,
+      1.3616693195217522e-06,
+      0.9999489784240723,
+      0.9999176263809204,
+      2.2066062683734344e-06,
+      1.6536185967197525e-06,
+      8.639080419925449e-07,
+      1.142714187163385e-10,
+      2.514831862754363e-07,
+      1.2973109697611562e-08,
+      1.2010896277558913e-08,
+      1.1641309072274453e-07,
+      5.986486684150805e-08,
+      3.848546370477379e-09,
+      7.894892064541637e-07
+    ],
+    "final_labels": [
+      "009",
+      "010"
+    ],
+    "status": "edited",
+    "reviewer_notes": "",
+    "timestamp": "2026-03-16T12:36:46.417525"
+  },
+  "0034027774": {
+    "sample_id": "0034027774",
+    "raw_labels": [
+      "005"
+    ],
+    "png_std_path": "/home/zmirikha/Github/rnd_q2/data/0A1OLRV96N3/Approved_qc/std_normalized/qc/0034027774_005_6.png",
+    "png_patch_path": "/home/zmirikha/Github/rnd_q2/data/0A1OLRV96N3/Approved_qc/patch_normalized/qc/0034027774_005_6.png",
+    "npy_std_path": "/home/zmirikha/Github/rnd_q2/data/0A1OLRV96N3/Approved_qc/std_normalized/d0034027774_005.npy",
+    "npy_patch_path": "/home/zmirikha/Github/rnd_q2/data/0A1OLRV96N3/Approved_qc/patch_normalized/d0034027774_005.npy",
+    "model_predictions": [
+      9.667888889453025e-08,
+      8.595640865749488e-10,
+      4.735221637020004e-08,
+      2.4591326308609496e-08,
+      8.385694059143134e-07,
+      0.9999759197235107,
+      0.999919056892395,
+      5.0945720431627706e-05,
+      4.1195684730155335e-07,
+      6.733707778039388e-07,
+      1.5324082280887552e-10,
+      1.5180596619757125e-06,
+      1.2316881736751384e-07,
+      1.8553127034692807e-08,
+      1.352913727714622e-07,
+      9.174488013741211e-08,
+      3.969873318965256e-08,
+      3.1192487881526176e-07,
+      9.567532970322645e-07,
+      9.020861280184533e-10,
+      1.0802989436342614e-06,
+      1.7312457245566293e-08
+    ],
+    "final_labels": [
+      "005",
+      "006"
+    ],
+    "status": "edited",
+    "reviewer_notes": "",
+    "timestamp": "2026-03-16T12:36:52.879964"
+  },
+  "0016881766": {
+    "sample_id": "0016881766",
+    "raw_labels": [
+      "011"
+    ],
+    "png_std_path": "/home/zmirikha/Github/rnd_q2/data/0A1OLRV96N3/Approved_qc/std_normalized/qc/0016881766_011_12.png",
+    "png_patch_path": "/home/zmirikha/Github/rnd_q2/data/0A1OLRV96N3/Approved_qc/patch_normalized/qc/0016881766_011_12.png",
+    "npy_std_path": "/home/zmirikha/Github/rnd_q2/data/0A1OLRV96N3/Approved_qc/std_normalized/d0016881766_011.npy",
+    "npy_patch_path": "/home/zmirikha/Github/rnd_q2/data/0A1OLRV96N3/Approved_qc/patch_normalized/d0016881766_011.npy",
+    "model_predictions": [
+      1.476453377335929e-07,
+      4.189602484383492e-11,
+      1.1876846883751568e-07,
+      1.5358090195149998e-06,
+      2.1230153190998635e-09,
+      1.2309618213635076e-08,
+      2.24069990508724e-05,
+      3.9731420931055084e-10,
+      1.0050392120319884e-05,
+      3.828955414064694e-06,
+      1.2167109161964618e-05,
+      0.9997535347938538,
+      0.999829888343811,
+      7.168329716478183e-07,
+      1.4838735296507366e-05,
+      1.5864326314840582e-06,
+      1.8471702389888378e-08,
+      5.676985892932862e-06,
+      1.588385600825859e-07,
+      6.875814584361706e-09,
+      3.300706339359749e-07,
+      2.5711047513254925e-08
+    ],
+    "final_labels": [
+      "011",
+      "012"
+    ],
+    "status": "edited",
+    "reviewer_notes": "",
+    "timestamp": "2026-03-16T12:35:23.305357"
+  },
+  "0030454289": {
+    "sample_id": "0030454289",
+    "raw_labels": [
+      "011"
+    ],
+    "png_std_path": "/home/zmirikha/Github/rnd_q2/data/0A1OLRV96N3/Approved_qc/std_normalized/qc/0030454289_011.png",
+    "png_patch_path": "/home/zmirikha/Github/rnd_q2/data/0A1OLRV96N3/Approved_qc/patch_normalized/qc/0030454289_011.png",
+    "npy_std_path": "/home/zmirikha/Github/rnd_q2/data/0A1OLRV96N3/Approved_qc/std_normalized/d0030454289_011.npy",
+    "npy_patch_path": "/home/zmirikha/Github/rnd_q2/data/0A1OLRV96N3/Approved_qc/patch_normalized/d0030454289_011.npy",
+    "model_predictions": [
+      8.477546202811936e-07,
+      1.4463132913533627e-09,
+      3.084343802584044e-07,
+      3.170055379086989e-06,
+      4.978983447756491e-09,
+      7.650205446907421e-08,
+      1.956071855602204e-06,
+      2.6231330996218105e-10,
+      6.870940978842555e-06,
+      5.263608500172268e-07,
+      1.5998559774743626e-06,
+      0.9997902512550354,
+      0.9560156464576721,
+      3.8555061365741494e-08,
+      1.1542248103069142e-05,
+      1.9688248187321733e-07,
+      1.915156033760468e-08,
+      3.98954489355674e-06,
+      6.981962563656907e-09,
+      4.1295667330132346e-08,
+      1.415903625456849e-07,
+      2.5638606793165764e-09
+    ],
+    "final_labels": [
+      "011",
+      "012"
+    ],
+    "status": "edited",
+    "reviewer_notes": "",
+    "timestamp": "2026-03-16T12:36:44.777620"
+  },
+  "0015985717": {
+    "sample_id": "0015985717",
+    "raw_labels": [
+      "001"
+    ],
+    "png_std_path": "/home/zmirikha/Github/rnd_q2/data/0A1OLRV96N3/Approved_qc/std_normalized/qc/0015985717_001.png",
+    "png_patch_path": "/home/zmirikha/Github/rnd_q2/data/0A1OLRV96N3/Approved_qc/patch_normalized/qc/0015985717_001.png",
+    "npy_std_path": "/home/zmirikha/Github/rnd_q2/data/0A1OLRV96N3/Approved_qc/std_normalized/d0015985717_001.npy",
+    "npy_patch_path": "/home/zmirikha/Github/rnd_q2/data/0A1OLRV96N3/Approved_qc/patch_normalized/d0015985717_001.npy",
+    "model_predictions": [
+      0.006862611044198275,
+      0.9947861433029175,
+      0.00023890199372544885,
+      2.4235927753579745e-07,
+      2.0648138161050156e-05,
+      1.1113221489722491e-06,
+      4.299079955671914e-05,
+      5.009669052924437e-07,
+      1.251887593589629e-09,
+      2.01297334569972e-05,
+      7.490235293516889e-05,
+      4.0045900817631264e-08,
+      1.0541181154621881e-06,
+      7.622161774634151e-06,
+      1.187591624329798e-05,
+      5.6619278439029586e-06,
+      6.5137951423821505e-06,
+      1.9952415186708095e-06,
+      5.4877025831956416e-05,
+      5.283989230520092e-05,
+      1.1816347722515275e-07,
+      5.642774567604647e-07
+    ],
+    "final_labels": [
+      "001"
+    ],
+    "status": "edited",
+    "reviewer_notes": "",
+    "timestamp": "2026-03-16T12:35:20.843195"
+  },
+  "0007867862": {
+    "sample_id": "0007867862",
+    "raw_labels": [
+      "014"
+    ],
+    "png_std_path": "/home/zmirikha/Github/rnd_q2/data/0A1OLRV96N3/Approved_qc/std_normalized/qc/0007867862_014_13_15.png",
+    "png_patch_path": "/home/zmirikha/Github/rnd_q2/data/0A1OLRV96N3/Approved_qc/patch_normalized/qc/0007867862_014_13_15.png",
+    "npy_std_path": "/home/zmirikha/Github/rnd_q2/data/0A1OLRV96N3/Approved_qc/std_normalized/d0007867862_014.npy",
+    "npy_patch_path": "/home/zmirikha/Github/rnd_q2/data/0A1OLRV96N3/Approved_qc/patch_normalized/d0007867862_014.npy",
+    "model_predictions": [
+      9.353015584245838e-11,
+      1.288249791286944e-07,
+      3.777204256039113e-07,
+      8.999387546282378e-08,
+      5.687059456249699e-06,
+      4.3179870345966265e-08,
+      3.075573476962745e-05,
+      3.45709963767149e-06,
+      4.7533658289466985e-06,
+      3.9515472849416255e-07,
+      9.833573130890727e-06,
+      6.828453820162395e-07,
+      0.0008897865773178637,
+      0.9993143081665039,
+      0.9999716281890869,
+      0.9990087151527405,
+      0.00010104598186444491,
+      3.107834345428273e-08,
+      5.212655764808005e-07,
+      6.375103680511529e-07,
+      4.864472913368445e-08,
+      2.3383651637232106e-07
+    ],
+    "final_labels": [
+      "013",
+      "014",
+      "015"
+    ],
+    "status": "edited",
+    "reviewer_notes": "",
+    "timestamp": "2026-03-16T12:34:48.484267"
+  },
+  "0017516464": {
+    "sample_id": "0017516464",
+    "raw_labels": [
+      "001"
+    ],
+    "png_std_path": "/home/zmirikha/Github/rnd_q2/data/0A1OLRV96N3/Approved_qc/std_normalized/qc/0017516464_001.png",
+    "png_patch_path": "/home/zmirikha/Github/rnd_q2/data/0A1OLRV96N3/Approved_qc/patch_normalized/qc/0017516464_001.png",
+    "npy_std_path": "/home/zmirikha/Github/rnd_q2/data/0A1OLRV96N3/Approved_qc/std_normalized/d0017516464_001.npy",
+    "npy_patch_path": "/home/zmirikha/Github/rnd_q2/data/0A1OLRV96N3/Approved_qc/patch_normalized/d0017516464_001.npy",
+    "model_predictions": [
+      0.005648974794894457,
+      0.9968249797821045,
+      5.094706011732342e-06,
+      1.491891943317114e-08,
+      9.802205340747605e-07,
+      1.837398144743929e-08,
+      2.261622285004705e-06,
+      1.4760466182650589e-09,
+      1.0986324697204175e-12,
+      1.9784724827331956e-06,
+      1.8373546026850818e-06,
+      1.6441414896206652e-09,
+      7.75871171754261e-08,
+      1.5484108928376372e-07,
+      7.511564490414457e-07,
+      8.339949175706352e-08,
+      2.409355488453002e-07,
+      2.2803025245821118e-08,
+      1.4280337268246512e-07,
+      3.566906912055856e-07,
+      5.8107403437535066e-12,
+      7.302623783456141e-11
+    ],
+    "final_labels": [
+      "001"
+    ],
+    "status": "edited",
+    "reviewer_notes": "",
+    "timestamp": "2026-03-16T12:35:28.175973"
+  },
+  "0026521998": {
+    "sample_id": "0026521998",
+    "raw_labels": [
+      "016"
+    ],
+    "png_std_path": "/home/zmirikha/Github/rnd_q2/data/0A1OLRV96N3/Approved_qc/std_normalized/qc/0026521998_016_15.png",
+    "png_patch_path": "/home/zmirikha/Github/rnd_q2/data/0A1OLRV96N3/Approved_qc/patch_normalized/qc/0026521998_016_15.png",
+    "npy_std_path": "/home/zmirikha/Github/rnd_q2/data/0A1OLRV96N3/Approved_qc/std_normalized/d0026521998_016.npy",
+    "npy_patch_path": "/home/zmirikha/Github/rnd_q2/data/0A1OLRV96N3/Approved_qc/patch_normalized/d0026521998_016.npy",
+    "model_predictions": [
+      6.336865060463381e-11,
+      2.3960724029881142e-11,
+      3.510580021126586e-11,
+      1.6948742853628573e-08,
+      7.558979553401457e-10,
+      1.9458681776995945e-08,
+      3.701127226918288e-08,
+      2.7021117787739968e-08,
+      6.096085858331435e-09,
+      1.716415343189226e-10,
+      1.919920666892949e-09,
+      1.3629215533939032e-09,
+      1.6330432561773023e-09,
+      6.224937010301801e-08,
+      3.3228081974812085e-07,
+      0.0022286789026111364,
+      0.9909543395042419,
+      3.4028214486170327e-06,
+      8.089795500154651e-10,
+      3.1576954384604505e-09,
+      8.565413378569531e-10,
+      3.010244720158539e-09
+    ],
+    "final_labels": [
+      "015",
+      "016"
+    ],
+    "status": "edited",
+    "reviewer_notes": "",
+    "timestamp": "2026-03-16T12:35:42.747452"
+  },
+  "0030193739": {
+    "sample_id": "0030193739",
+    "raw_labels": [
+      "007"
+    ],
+    "png_std_path": "/home/zmirikha/Github/rnd_q2/data/0A1OLRV96N3/Approved_qc/std_normalized/qc/0030193739_007_6_8.png",
+    "png_patch_path": "/home/zmirikha/Github/rnd_q2/data/0A1OLRV96N3/Approved_qc/patch_normalized/qc/0030193739_007_6_8.png",
+    "npy_std_path": "/home/zmirikha/Github/rnd_q2/data/0A1OLRV96N3/Approved_qc/std_normalized/d0030193739_007.npy",
+    "npy_patch_path": "/home/zmirikha/Github/rnd_q2/data/0A1OLRV96N3/Approved_qc/patch_normalized/d0030193739_007.npy",
+    "model_predictions": [
+      2.37728514207447e-07,
+      3.09831993394738e-10,
+      7.01177996234037e-05,
+      7.469820047845133e-06,
+      2.5835868200374534e-07,
+      1.4743465726496652e-05,
+      0.0027279206551611423,
+      0.0886942595243454,
+      0.4820883870124817,
+      2.8559672955452697e-06,
+      8.502623671802212e-08,
+      8.920950676838402e-06,
+      1.73669343439542e-06,
+      5.089685828352231e-07,
+      7.945930519781541e-06,
+      3.311490900159697e-06,
+      1.418266151631542e-06,
+      2.6047368919535074e-06,
+      7.199818128356128e-07,
+      1.8213795272004063e-07,
+      2.8066318918718025e-05,
+      2.2048576283850707e-05
+    ],
+    "final_labels": [
+      "006"
+    ],
+    "status": "edited",
+    "reviewer_notes": "",
+    "timestamp": "2026-03-16T12:36:30.966607"
+  },
+  "0027482672": {
+    "sample_id": "0027482672",
+    "raw_labels": [
+      "010"
+    ],
+    "png_std_path": "/home/zmirikha/Github/rnd_q2/data/0A1OLRV96N3/Approved_qc/std_normalized/qc/0027482672_010_11.png",
+    "png_patch_path": "/home/zmirikha/Github/rnd_q2/data/0A1OLRV96N3/Approved_qc/patch_normalized/qc/0027482672_010_11.png",
+    "npy_std_path": "/home/zmirikha/Github/rnd_q2/data/0A1OLRV96N3/Approved_qc/std_normalized/d0027482672_010.npy",
+    "npy_patch_path": "/home/zmirikha/Github/rnd_q2/data/0A1OLRV96N3/Approved_qc/patch_normalized/d0027482672_010.npy",
+    "model_predictions": [
+      4.774636849086411e-12,
+      6.620075598817721e-10,
+      1.751256064608242e-07,
+      1.918842515435948e-11,
+      5.518266448234499e-07,
+      7.816668201598986e-09,
+      2.887680199126219e-11,
+      1.1337328942317981e-06,
+      4.60607878949304e-07,
+      2.76653906894353e-07,
+      0.999832034111023,
+      0.9901828169822693,
+      5.466385388785966e-08,
+      2.5512228774005052e-08,
+      5.572244887730449e-08,
+      7.72029440376798e-10,
+      3.7362859472978016e-08,
+      1.7520072503884876e-08,
+      2.484180396111757e-11,
+      3.666536940727383e-07,
+      7.875375906962745e-09,
+      5.917360379470438e-09
+    ],
+    "final_labels": [
+      "010",
+      "011"
+    ],
+    "status": "edited",
+    "reviewer_notes": "",
+    "timestamp": "2026-03-16T12:36:09.179863"
+  },
+  "0028306945": {
+    "sample_id": "0028306945",
+    "raw_labels": [
+      "015"
+    ],
+    "png_std_path": "/home/zmirikha/Github/rnd_q2/data/0A1OLRV96N3/Approved_qc/std_normalized/qc/0028306945_015_16.png",
+    "png_patch_path": "/home/zmirikha/Github/rnd_q2/data/0A1OLRV96N3/Approved_qc/patch_normalized/qc/0028306945_015_16.png",
+    "npy_std_path": "/home/zmirikha/Github/rnd_q2/data/0A1OLRV96N3/Approved_qc/std_normalized/d0028306945_015.npy",
+    "npy_patch_path": "/home/zmirikha/Github/rnd_q2/data/0A1OLRV96N3/Approved_qc/patch_normalized/d0028306945_015.npy",
+    "model_predictions": [
+      8.639433168866617e-09,
+      2.9614406926725678e-08,
+      2.7250177669913e-09,
+      2.5507708301120147e-07,
+      5.955792516942893e-07,
+      3.13102759719186e-07,
+      7.038912599455216e-07,
+      2.0813001810893184e-06,
+      2.3371852009290706e-08,
+      2.52169797931856e-07,
+      1.583213474987133e-06,
+      1.4847864271416711e-08,
+      9.66617108133505e-07,
+      2.0567092917644914e-08,
+      2.344276254007127e-06,
+      0.9998170733451843,
+      0.999344527721405,
+      6.545552605530247e-05,
+      1.2570237686304608e-06,
+      8.672986240298997e-08,
+      7.152226366713421e-09,
+      1.371024751506411e-07
+    ],
+    "final_labels": [
+      "015",
+      "016"
+    ],
+    "status": "edited",
+    "reviewer_notes": "",
+    "timestamp": "2026-03-16T12:36:13.215701"
+  }
+}
