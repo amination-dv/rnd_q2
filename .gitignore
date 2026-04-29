@@ -1,0 +1,22 @@
+# Local one-off helper scripts written during data-curation sessions.
+# These have date- and folder-specific paths and are not meant to be
+# part of the project history.
+data_preparation/_*.py
+
+# Python build / caches
+__pycache__/
+*.py[cod]
+*$py.class
+.ipynb_checkpoints/
+
+# Environment / IDE
+.venv/
+.env
+.DS_Store
+
+# Training run artifacts (W&B local cache)
+wandb/
+
+# Binary artifacts (model checkpoints, generated/QC images)
+*.pth
+*.png
